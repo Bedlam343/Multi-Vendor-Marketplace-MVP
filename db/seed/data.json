@@ -1,0 +1,36 @@
+{
+    "users": [
+        {
+            "id": "user_1",
+            "name": "Jagi Singh",
+            "email": "jagi@example.com",
+            "emailVerified": true,
+            "image": "https://api.dicebear.com/7.x/avataaars/svg?seed=Jagi"
+        },
+        {
+            "id": "user_2",
+            "name": "Sarah Dev",
+            "email": "sarah@example.com",
+            "emailVerified": true,
+            "image": "https://api.dicebear.com/7.x/avataaars/svg?seed=Sarah"
+        }
+    ],
+    "items": [
+        {
+            "sellerId": "user_1",
+            "title": "Vintage Mechanical Keyboard",
+            "description": "Clicky blue switches, slightly dusty but works perfectly.",
+            "price": "85.00",
+            "condition": "good",
+            "images": ["https://picsum.photos/seed/kb/400/400"]
+        },
+        {
+            "sellerId": "user_2",
+            "title": "Refurbished Macbook Air M2",
+            "description": "Midnight color, 16GB RAM. Like new condition.",
+            "price": "950.00",
+            "condition": "like-new",
+            "images": ["https://picsum.photos/seed/mac/400/400"]
+        }
+    ]
+}
