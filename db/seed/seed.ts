@@ -24,7 +24,7 @@ async function clearDatabase() {
     // CASCADE automatically handles foreign key constraints by clearing dependent tables
     // RESTART IDENTITY resets any auto-incrementing IDs back to 1
     await db.execute(
-        sql`TRUNCATE TABLE "items", "account", "session", "user", "verification" RESTART IDENTITY CASCADE;`
+        sql`TRUNCATE TABLE "items", "account", "session", "user" RESTART IDENTITY CASCADE;`
     );
 }
 
@@ -67,6 +67,9 @@ async function main() {
                 updatedAt: new Date(),
             }))
         );
+
+        console.log("🧹 Cleaning up seeder sessions...");
+        await db.delete(schema.session);
 
         console.log("✅ Seed completed successfully!");
     } catch (error) {

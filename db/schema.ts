@@ -16,16 +16,16 @@ export const user = pgTable("user", {
     email: text("email").notNull().unique(),
     emailVerified: boolean("emailVerified").notNull(),
     image: text("image"),
-    createdAt: timestamp("createdAt").notNull(),
-    updatedAt: timestamp("updatedAt").notNull(),
+    createdAt: timestamp("createdAt").notNull().defaultNow(),
+    updatedAt: timestamp("updatedAt").notNull().defaultNow(),
 });
 
 export const session = pgTable("session", {
     id: text("id").primaryKey(),
     expiresAt: timestamp("expiresAt").notNull(),
     token: text("token").notNull().unique(),
-    createdAt: timestamp("createdAt").notNull(),
-    updatedAt: timestamp("updatedAt").notNull(),
+    createdAt: timestamp("createdAt").notNull().defaultNow(),
+    updatedAt: timestamp("updatedAt").notNull().defaultNow(),
     ipAddress: text("ipAddress"),
     userAgent: text("userAgent"),
     userId: text("userId")
@@ -48,8 +48,8 @@ export const account = pgTable("account", {
     refreshTokenExpiresAt: timestamp("refreshTokenExpiresAt"),
     scope: text("scope"),
     password: text("password"),
-    createdAt: timestamp("createdAt").notNull(),
-    updatedAt: timestamp("updatedAt").notNull(),
+    createdAt: timestamp("createdAt").notNull().defaultNow(),
+    updatedAt: timestamp("updatedAt").notNull().defaultNow(),
 });
 
 /* --- ENUMS --- */
