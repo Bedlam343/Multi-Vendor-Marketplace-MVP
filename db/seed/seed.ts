@@ -15,16 +15,15 @@ const pool = new Pool({
 
 const db = drizzle(pool, { schema });
 
-// Helper to generate a random vector of 1536 dimensions
+// Helper to generate a random vector
 const generateDummyVector = () =>
     Array.from({ length: 1536 }, () => Math.random());
 
 async function clearDatabase() {
     console.log("🗑️  Emptying existing data...");
-    // CASCADE automatically handles foreign key constraints by clearing dependent tables
-    // RESTART IDENTITY resets any auto-incrementing IDs back to 1
+    // Include all new tables in the truncate
     await db.execute(
-        sql`TRUNCATE TABLE "items", "account", "session", "user" RESTART IDENTITY CASCADE;`
+        sql`TRUNCATE TABLE "orders", "messages", "items", "account", "session", "user" RESTART IDENTITY CASCADE;`
     );
 }
 
@@ -34,44 +33,76 @@ async function main() {
     try {
         await clearDatabase();
 
-        // 1. Seed Users via Better Auth API
-        console.log("👤 Creating users and accounts...");
-        const userMap: Record<string, string> = {}; // To map dummy IDs to real DB IDs
+        // --- 1. Seed Users ---
+        console.log("👤 Creating users...");
+        const userMap: Record<string, string> = {};
 
         for (const u of data.users) {
-            const res = await auth.api.signUpEmail({
-                body: {
-                    email: u.email,
-                    password: u.password,
-                    name: u.name,
-                    image: u.image,
-                },
-            });
+            try {
+                // Using Better Auth to create the user properly (hashing passwords, etc)
+                const res = await auth.api.signUpEmail({
+                    body: {
+                        email: u.email,
+                        password: u.password,
+                        name: u.name,
+                        image: u.image,
+                    },
+                });
 
-            // Better Auth generates its own IDs.
-            // We map your JSON "user_1" to the actual ID Better Auth created.
-            if (res?.user?.id) {
-                userMap[u.id] = res.user.id;
+                if (res?.user?.id) {
+                    userMap[u.id] = res.user.id;
+                }
+            } catch (err) {
+                console.warn(`⚠️  Failed to create user ${u.email}:`, err);
             }
         }
 
-        // 2. Seed Items
+        // --- 2. Seed Items ---
         console.log("📦 Seeding items...");
-        await db.insert(schema.items).values(
-            data.items.map((item) => ({
-                ...item,
-                // Replace the JSON placeholder ID with the actual DB ID
-                sellerId: userMap[item.sellerId] || item.sellerId,
-                embedding: generateDummyVector(),
-                createdAt: new Date(),
-                updatedAt: new Date(),
-            }))
-        );
+        const itemMap: Record<string, string> = {};
 
+        // We loop so we can capture the specific ID for each item
+        for (const item of data.items) {
+            const [insertedItem] = await db
+                .insert(schema.items)
+                .values({
+                    sellerId: userMap[item.sellerId], // Link to real User ID
+                    title: item.title,
+                    description: item.description,
+                    price: item.price,
+                    condition: item.condition as any,
+                    status: item.status as any,
+                    images: item.images,
+                    embedding: generateDummyVector(),
+                })
+                .returning({ id: schema.items.id });
+
+            // Map the JSON ID (item_1) to Real DB ID (uuid...)
+            itemMap[item.id] = insertedItem.id;
+        }
+
+        // --- 3. Seed Orders ---
+        console.log("💰 Seeding orders...");
+        if (data.orders && data.orders.length > 0) {
+            await db.insert(schema.orders).values(
+                data.orders.map((order) => ({
+                    itemId: itemMap[order.itemId], // Real Item UUID
+                    buyerId: userMap[order.buyerId], // Real Buyer UUID
+                    sellerId: userMap[order.sellerId], // Real Seller UUID
+                    amountPaid: order.amountPaid,
+                    status: order.status as any,
+                }))
+            );
+        }
+
+        // --- Cleanup ---
         console.log("🧹 Cleaning up seeder sessions...");
         await db.delete(schema.session);
 
         console.log("✅ Seed completed successfully!");
+        console.log(`   - Users created: ${Object.keys(userMap).length}`);
+        console.log(`   - Items created: ${Object.keys(itemMap).length}`);
+        console.log(`   - Orders created: ${data.orders.length}`);
     } catch (error) {
         console.error("❌ Seed failed:", error);
     } finally {

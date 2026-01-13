@@ -15,24 +15,182 @@
             "password": "password123",
             "emailVerified": true,
             "image": "https://api.dicebear.com/7.x/avataaars/svg?seed=Sarah"
+        },
+        {
+            "id": "user_3",
+            "name": "Mike Chen",
+            "email": "mike@example.com",
+            "password": "password123",
+            "emailVerified": true,
+            "image": "https://api.dicebear.com/7.x/avataaars/svg?seed=Mike"
+        },
+        {
+            "id": "user_4",
+            "name": "Emily Blunt",
+            "email": "emily@example.com",
+            "password": "password123",
+            "emailVerified": true,
+            "image": "https://api.dicebear.com/7.x/avataaars/svg?seed=Emily"
+        },
+        {
+            "id": "user_5",
+            "name": "David Ross",
+            "email": "david@example.com",
+            "password": "password123",
+            "emailVerified": true,
+            "image": "https://api.dicebear.com/7.x/avataaars/svg?seed=David"
         }
     ],
     "items": [
         {
+            "id": "item_1",
             "sellerId": "user_1",
             "title": "Vintage Mechanical Keyboard",
             "description": "Clicky blue switches, slightly dusty but works perfectly.",
             "price": "85.00",
             "condition": "good",
+            "status": "available",
             "images": ["https://picsum.photos/seed/kb/400/400"]
         },
         {
+            "id": "item_2",
             "sellerId": "user_2",
             "title": "Refurbished Macbook Air M2",
             "description": "Midnight color, 16GB RAM. Like new condition.",
             "price": "950.00",
             "condition": "like-new",
+            "status": "available",
             "images": ["https://picsum.photos/seed/mac/400/400"]
+        },
+        {
+            "id": "item_3",
+            "sellerId": "user_1",
+            "title": "Sony A7III Camera Body",
+            "description": "Used for 2 years, shutter count 15k. Great condition.",
+            "price": "1200.00",
+            "condition": "good",
+            "status": "sold",
+            "images": ["https://picsum.photos/seed/camera/400/400"]
+        },
+        {
+            "id": "item_4",
+            "sellerId": "user_3",
+            "title": "Herman Miller Aeron Chair",
+            "description": "Size B, fully loaded. Mesh is perfect.",
+            "price": "450.00",
+            "condition": "good",
+            "status": "available",
+            "images": ["https://picsum.photos/seed/chair/400/400"]
+        },
+        {
+            "id": "item_5",
+            "sellerId": "user_2",
+            "title": "iPhone 13 Mini 128GB",
+            "description": "Green color, battery health 88%. Includes case.",
+            "price": "300.00",
+            "condition": "fair",
+            "status": "sold",
+            "images": ["https://picsum.photos/seed/iphone/400/400"]
+        },
+        {
+            "id": "item_6",
+            "sellerId": "user_4",
+            "title": "Leather Weekend Bag",
+            "description": "Genuine leather, handmade. Never used.",
+            "price": "120.00",
+            "condition": "new",
+            "status": "available",
+            "images": ["https://picsum.photos/seed/bag/400/400"]
+        },
+        {
+            "id": "item_7",
+            "sellerId": "user_1",
+            "title": "Nintendo Switch OLED",
+            "description": "White joycons, screen protector applied since day 1.",
+            "price": "280.00",
+            "condition": "like-new",
+            "status": "available",
+            "images": ["https://picsum.photos/seed/switch/400/400"]
+        },
+        {
+            "id": "item_8",
+            "sellerId": "user_5",
+            "title": "Vintage Denim Jacket",
+            "description": "Levis oversized jacket from the 90s.",
+            "price": "65.00",
+            "condition": "good",
+            "status": "available",
+            "images": ["https://picsum.photos/seed/jacket/400/400"]
+        },
+        {
+            "id": "item_9",
+            "sellerId": "user_2",
+            "title": "AirPods Pro 2nd Gen",
+            "description": "Lost the case, selling buds only.",
+            "price": "80.00",
+            "condition": "fair",
+            "status": "available",
+            "images": ["https://picsum.photos/seed/airpods/400/400"]
+        },
+        {
+            "id": "item_10",
+            "sellerId": "user_3",
+            "title": "Dyson V11 Vacuum",
+            "description": "Works great, just upgraded to the V15.",
+            "price": "250.00",
+            "condition": "good",
+            "status": "sold",
+            "images": ["https://picsum.photos/seed/dyson/400/400"]
+        },
+        {
+            "id": "item_11",
+            "sellerId": "user_4",
+            "title": "Kindle Paperwhite",
+            "description": "Previous gen, waterproof. No ads.",
+            "price": "75.00",
+            "condition": "good",
+            "status": "sold",
+            "images": ["https://picsum.photos/seed/kindle/400/400"]
+        },
+        {
+            "id": "item_12",
+            "sellerId": "user_1",
+            "title": "Fujifilm X100V",
+            "description": "Silver. Barely used. Comes with hood.",
+            "price": "1400.00",
+            "condition": "like-new",
+            "status": "available",
+            "images": ["https://picsum.photos/seed/fuji/400/400"]
+        }
+    ],
+    "orders": [
+        {
+            "itemId": "item_3",
+            "buyerId": "user_2",
+            "sellerId": "user_1",
+            "amountPaid": "1150.00",
+            "status": "completed"
+        },
+        {
+            "itemId": "item_5",
+            "buyerId": "user_3",
+            "sellerId": "user_2",
+            "amountPaid": "280.00",
+            "status": "completed"
+        },
+        {
+            "itemId": "item_10",
+            "buyerId": "user_1",
+            "sellerId": "user_3",
+            "amountPaid": "250.00",
+            "status": "completed"
+        },
+        {
+            "itemId": "item_11",
+            "buyerId": "user_1",
+            "sellerId": "user_4",
+            "amountPaid": "70.00",
+            "status": "completed"
         }
     ]
 }
