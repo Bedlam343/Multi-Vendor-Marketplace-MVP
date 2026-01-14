@@ -32,6 +32,11 @@ export const insertUserSchema = baseUserSchema
         path: ["confirmPassword"],
     });
 
+export const loginSchema = z.object({
+    email: z.email("Invalid email address"),
+    password: z.string().min(1, "Password is required."),
+});
+
 export type LoginFieldErrors = z.ZodFlattenedError<
     z.infer<typeof loginSchema>
 >["fieldErrors"];
@@ -100,9 +105,4 @@ export const insertMessageSchema = createInsertSchema(messages, {
     content: z.string().min(1, "Message content cannot be empty"),
 }).omit({
     id: true,
-});
-
-export const loginSchema = z.object({
-    email: z.email("Invalid email address"),
-    password: z.string().min(8, "Password must be at least 8 characters long"),
 });

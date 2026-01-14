@@ -5,7 +5,7 @@ import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 
 import { auth } from "@/lib/auth";
-import { authClient, betterAuthErrorCodes } from "@/lib/auth-client";
+import { betterAuthErrorCodes } from "@/lib/auth-client";
 import {
     loginSchema,
     insertUserSchema,
@@ -32,31 +32,39 @@ export const loginAction = async (
 ): Promise<LoginActionResponse> => {
     const rawData = Object.fromEntries(formData.entries());
 
-    const validationFields = loginSchema.safeParse(rawData);
-    if (!validationFields.success) {
+    // Validate Input
+    const validation = loginSchema.safeParse(rawData);
+    if (!validation.success) {
         return {
             success: false,
-            errors: validationFields.error.flatten().fieldErrors,
+            errors: z.flattenError(validation.error).fieldErrors,
         };
     }
 
-    const { email, password } = validationFields.data;
+    const { email, password } = validation.data;
 
-    const { error } = await authClient.signIn.email({
-        email,
-        password,
-    });
+    try {
+        await auth.api.signInEmail({
+            body: {
+                email,
+                password,
+            },
+        });
 
-    if (error) {
-        // Use the centralized mapping for a clean, consistent message
-        const customError =
-            betterAuthErrorCodes[
-                error.code as keyof typeof betterAuthErrorCodes
-            ];
+        revalidatePath("/", "layout");
+    } catch (error) {
+        console.error("Login error:", error);
+
+        if (error instanceof APIError) {
+            return {
+                success: false,
+                message: betterAuthErrorCodes.INVALID_EMAIL_OR_PASSWORD.message,
+            };
+        }
 
         return {
             success: false,
-            message: customError?.message || error.message || "Login failed.",
+            message: "An unexpected error occurred. Please try again.",
         };
     }
 
@@ -87,6 +95,9 @@ export const signupAction = async (
                 name,
             },
         });
+
+        // so the dashboard picks up the new session/cookie
+        revalidatePath("/", "layout");
     } catch (error) {
         console.error("Signup error:", error);
 
@@ -136,7 +147,7 @@ export const signupAction = async (
 };
 
 export const logoutAction = async () => {
-    await authClient.signOut();
+    await auth.api.signOut();
     revalidatePath("/");
     redirect("/login");
 };

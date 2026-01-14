@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useActionState } from "react";
+import { useState, useActionState, useTransition } from "react";
 import { z } from "zod";
 import { signupAction } from "@/services/auth-actions";
 import { insertUserSchema, type SignupFieldErrors } from "@/db/validation";
@@ -10,10 +10,10 @@ import { PasswordRequirements } from "@/components/auth/PasswordRequirements";
 import { PasswordMatch } from "./PasswordMatch";
 
 export function SignupForm() {
-    // 1. useActionState handles the server response
+    // useActionState handles the server response
     const [state, action, isPending] = useActionState(signupAction, undefined);
+    const [isSubmitting, startTransition] = useTransition();
 
-    // 2. Local state for client-side only errors (to show them before hitting server)
     const [clientErrors, setClientErrors] = useState<SignupFieldErrors>({});
 
     const [formData, setFormData] = useState({
@@ -28,6 +28,7 @@ export function SignupForm() {
             ...prev,
             [e.target.name]: e.target.value,
         }));
+
         // Clear specific error when user starts typing again
         if (clientErrors[e.target.name as keyof SignupFieldErrors]) {
             setClientErrors((prev) => ({
@@ -37,7 +38,6 @@ export function SignupForm() {
         }
     };
 
-    // 3. The Validation Wrapper
     async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
         event.preventDefault();
         setClientErrors({}); // Reset client errors
@@ -56,11 +56,15 @@ export function SignupForm() {
         }
 
         // If Zod passes, call the Server Action manually
-        action(payload);
+        startTransition(() => {
+            action(payload);
+        });
     }
 
     // Merge errors: Priority to clientErrors, fallback to server state errors
     const errors = { ...state?.errors, ...clientErrors };
+
+    const currentlySubmitting = isPending || isSubmitting;
 
     return (
         /* 4. Use onSubmit instead of action for manual control */
@@ -80,7 +84,7 @@ export function SignupForm() {
                 placeholder="Jane Doe"
                 value={formData.name}
                 onChange={handleChange}
-                disabled={isPending}
+                disabled={currentlySubmitting}
                 error={errors.name}
             />
 
@@ -92,7 +96,7 @@ export function SignupForm() {
                 placeholder="jane@example.com"
                 value={formData.email}
                 onChange={handleChange}
-                disabled={isPending}
+                disabled={currentlySubmitting}
                 error={errors.email}
             />
 
@@ -104,7 +108,7 @@ export function SignupForm() {
                 placeholder="••••••••"
                 value={formData.password}
                 onChange={handleChange}
-                disabled={isPending}
+                disabled={currentlySubmitting}
                 error={errors.password}
             />
 
@@ -118,7 +122,7 @@ export function SignupForm() {
                 placeholder="••••••••"
                 value={formData.confirmPassword}
                 onChange={handleChange}
-                disabled={isPending}
+                disabled={currentlySubmitting}
                 error={errors.confirmPassword}
             />
 
@@ -130,10 +134,10 @@ export function SignupForm() {
             <div>
                 <button
                     type="submit"
-                    disabled={isPending}
+                    disabled={currentlySubmitting}
                     className="w-full flex justify-center py-2.5 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-primary hover:bg-slate-800 disabled:opacity-70 transition-all cursor-pointer"
                 >
-                    {isPending ? "Validating..." : "Create account"}
+                    {currentlySubmitting ? "Validating..." : "Create account"}
                 </button>
             </div>
         </form>

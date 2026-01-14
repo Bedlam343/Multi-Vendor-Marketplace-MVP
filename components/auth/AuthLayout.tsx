@@ -1,5 +1,9 @@
 import Link from "next/link";
 
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
+import { redirect } from "next/navigation";
+
 interface AuthLayoutProps {
     children: React.ReactNode;
     title: string;
@@ -8,13 +12,21 @@ interface AuthLayoutProps {
     linkHref: string;
 }
 
-export function AuthLayout({
+export async function AuthLayout({
     children,
     title,
     subtitle,
     linkText,
     linkHref,
 }: AuthLayoutProps) {
+    const session = await auth.api.getSession({
+        headers: await headers(),
+    });
+
+    if (session) {
+        redirect("/dashboard");
+    }
+
     return (
         <div
             className="min-h-screen bg-primary-foreground flex flex-col 
