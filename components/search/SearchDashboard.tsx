@@ -12,7 +12,6 @@ import { type ItemWithSeller } from "@/data/items";
 import { getItemsAction } from "@/services/items-queries";
 import { type ItemFilters } from "@/db/validation";
 
-// --- SUB-COMPONENT: Item Card ---
 function ItemCard({ item }: { item: ItemWithSeller }) {
     return (
         <Link href={`/items/${item.id}`} className="group block h-full">
@@ -117,12 +116,27 @@ export function SearchDashboard({
         resetState();
     }, [initialData, initialPagination]);
 
-    const handleFilterChange = (key: string, value: string) => {
+    const handleFilterChange = (key: string, value?: string) => {
         const params = new URLSearchParams(searchParams.toString());
         if (value) params.set(key, value);
         else params.delete(key);
 
-        params.set("page", "1"); // Always reset to page 1
+        params.set("page", "1");
+
+        startTransition(() => {
+            router.replace(`/search?${params.toString()}`);
+        });
+    };
+
+    const handleReset = () => {
+        const params = new URLSearchParams(searchParams.toString());
+
+        // Explicitly delete all filter keys
+        ["search", "minPrice", "maxPrice", "condition"].forEach((key) => {
+            params.delete(key);
+        });
+
+        params.set("page", "1");
 
         startTransition(() => {
             router.replace(`/search?${params.toString()}`);
@@ -178,6 +192,7 @@ export function SearchDashboard({
                             <Filters
                                 filters={initialFilters}
                                 onFilterChange={handleFilterChange}
+                                onReset={handleReset}
                             />
                         </div>
                     </aside>
