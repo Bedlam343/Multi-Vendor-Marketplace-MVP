@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import { headers } from "next/headers";
-import { auth } from "@/lib/auth"; // Your Better-Auth instance
+import { auth } from "@/lib/auth";
 import { getDashboardData } from "@/data/dashboard";
 import DashboardOverview from "@/components/dashboard/DashboardOverview";
 

@@ -1,5 +1,10 @@
 @import "tailwindcss";
 
+/* globals.css */
+body {
+    @apply bg-slate-50 text-slate-900;
+}
+
 :root {
     /* --- Base Colors (Hinged on Slate) --- */
     --background: #ffffff; /* White */
