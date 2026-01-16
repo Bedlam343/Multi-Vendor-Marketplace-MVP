@@ -15,9 +15,10 @@ import { type ItemFilters } from "@/db/validation";
 function ItemCard({ item }: { item: ItemWithSeller }) {
     return (
         <Link href={`/items/${item.id}`} className="group block h-full">
-            <article className="h-full flex flex-col bg-white border border-slate-200 rounded-xl overflow-hidden transition-all duration-200 hover:shadow-lg hover:-translate-y-1">
+            <article className="h-full flex flex-col bg-card border border-border rounded-xl overflow-hidden 
+                transition-all duration-200 hover:shadow-lg hover:-translate-y-1">
                 {/* Image Container */}
-                <div className="relative aspect-[4/3] bg-slate-100 overflow-hidden">
+                <div className="relative aspect-[4/3] bg-muted overflow-hidden">
                     {item.images && item.images.length > 0 ? (
                         <Image
                             src={item.images[0]}
@@ -28,12 +29,12 @@ function ItemCard({ item }: { item: ItemWithSeller }) {
                             unoptimized
                         />
                     ) : (
-                        <div className="flex items-center justify-center h-full text-slate-400">
+                        <div className="flex items-center justify-center h-full text-muted-foreground">
                             <span className="text-sm">No Preview</span>
                         </div>
                     )}
                     {/* Badge: Price */}
-                    <div className="absolute bottom-3 left-3 bg-white/90 backdrop-blur-sm text-slate-900 px-2.5 py-1 rounded-full text-sm font-bold shadow-sm border border-slate-100/50">
+                    <div className="absolute bottom-3 left-3 bg-card/90 backdrop-blur-sm text-foreground px-2.5 py-1 rounded-full text-sm font-bold shadow-sm border border-border/50">
                         ${item.price.toLocaleString()}
                     </div>
                 </div>
@@ -41,22 +42,22 @@ function ItemCard({ item }: { item: ItemWithSeller }) {
                 {/* Card Body */}
                 <div className="p-4 flex flex-col flex-1">
                     <div className="flex justify-between items-start gap-2 mb-2">
-                        <h3 className="font-semibold text-slate-900 text-lg leading-tight truncate">
+                        <h3 className="font-semibold text-foreground text-lg leading-tight truncate">
                             {item.title}
                         </h3>
                     </div>
 
                     {/* Condition Badge */}
                     <div className="mb-4">
-                        <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-slate-100 text-slate-600 capitalize">
+                        <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-muted text-muted-foreground capitalize">
                             {item.condition?.replace("-", " ")}
                         </span>
                     </div>
 
                     {/* Footer: Seller & Time */}
-                    <div className="mt-auto pt-3 border-t border-slate-50 flex items-center justify-between text-xs text-slate-500">
+                    <div className="mt-auto pt-3 border-t border-border flex items-center justify-between text-xs text-muted-foreground">
                         <div className="flex items-center gap-2">
-                            <div className="w-5 h-5 rounded-full bg-slate-200 overflow-hidden relative border border-slate-100">
+                            <div className="w-5 h-5 rounded-full bg-muted overflow-hidden relative border border-border">
                                 {item.seller?.image ? (
                                     <Image
                                         src={item.seller.image}
@@ -66,12 +67,12 @@ function ItemCard({ item }: { item: ItemWithSeller }) {
                                         unoptimized
                                     />
                                 ) : (
-                                    <div className="w-full h-full bg-indigo-100 flex items-center justify-center text-indigo-600 font-bold text-[10px]">
+                                    <div className="w-full h-full bg-primary/20 flex items-center justify-center text-primary font-bold text-[10px]">
                                         {item.seller?.name?.[0] || "?"}
                                     </div>
                                 )}
                             </div>
-                            <span className="truncate max-w-[100px] font-medium text-slate-700">
+                            <span className="truncate max-w-[100px] font-medium text-foreground">
                                 {item.seller?.name || "Anonymous"}
                             </span>
                         </div>
@@ -158,7 +159,7 @@ export function SearchDashboard({
     };
 
     return (
-        <div className="min-h-screen bg-slate-50 font-sans text-slate-900">
+        <div className="min-h-screen bg-background font-sans text-foreground">
             <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
                 <div className="flex flex-col lg:flex-row gap-8">
                     {/* Mobile Filter Toggle */}
@@ -167,7 +168,7 @@ export function SearchDashboard({
                             onClick={() =>
                                 setMobileFiltersOpen(!mobileFiltersOpen)
                             }
-                            className="flex items-center gap-2 px-4 py-2 bg-white border border-slate-200 rounded-lg shadow-sm text-sm font-medium text-slate-700 w-full justify-center"
+                            className="flex items-center gap-2 px-4 py-2 bg-card border border-border rounded-lg shadow-sm text-sm font-medium text-muted-foreground w-full justify-center"
                         >
                             {mobileFiltersOpen ? (
                                 <X className="w-4 h-4" />
@@ -201,33 +202,33 @@ export function SearchDashboard({
                     <div className="flex-1">
                         {/* Results Header */}
                         <div className="mb-6 flex items-center justify-between">
-                            <h1 className="text-xl font-bold text-slate-900">
+                            <h1 className="text-xl font-bold text-foreground">
                                 {initialFilters.search
                                     ? `Results for "${initialFilters.search}"`
                                     : "Explore Collection"}
                             </h1>
-                            <span className="text-sm text-slate-500 font-medium bg-slate-100 px-3 py-1 rounded-full">
+                            <span className="text-sm text-muted-foreground font-medium bg-muted px-3 py-1 rounded-full">
                                 {initialPagination.total} items
                             </span>
                         </div>
 
                         {/* Grid */}
                         {items.length === 0 ? (
-                            <div className="bg-white rounded-xl border border-dashed border-slate-300 p-12 text-center">
-                                <div className="mx-auto w-12 h-12 bg-slate-100 rounded-full flex items-center justify-center mb-4">
-                                    <Search className="w-6 h-6 text-slate-400" />
+                            <div className="bg-card rounded-xl border border-dashed border-border p-12 text-center">
+                                <div className="mx-auto w-12 h-12 bg-muted rounded-full flex items-center justify-center mb-4">
+                                    <Search className="w-6 h-6 text-muted-foreground" />
                                 </div>
-                                <h3 className="text-lg font-medium text-slate-900">
+                                <h3 className="text-lg font-medium text-foreground">
                                     No items found
                                 </h3>
-                                <p className="text-slate-500 mt-1">
+                                <p className="text-muted-foreground mt-1">
                                     Try adjusting your filters or search terms.
                                 </p>
                                 <button
                                     onClick={() =>
                                         handleFilterChange("search", "")
                                     }
-                                    className="mt-4 text-indigo-600 font-medium hover:underline"
+                                    className="mt-4 text-primary font-medium hover:underline"
                                 >
                                     Clear Search
                                 </button>
@@ -245,7 +246,7 @@ export function SearchDashboard({
                             <div className="mt-12 flex justify-center">
                                 <button
                                     onClick={loadMore}
-                                    className="px-8 py-3 bg-white border border-slate-200 shadow-sm text-slate-700 font-medium rounded-full hover:bg-slate-50 hover:shadow-md transition-all active:scale-95 disabled:opacity-50"
+                                    className="px-8 py-3 bg-secondary border border-border shadow-sm text-foreground font-medium rounded-full hover:bg-muted hover:shadow-md transition-all active:scale-95 disabled:opacity-50"
                                 >
                                     Load More Listings
                                 </button>
@@ -253,8 +254,8 @@ export function SearchDashboard({
                         )}
 
                         {!hasMore && items.length > 0 && (
-                            <div className="mt-12 text-center border-t border-slate-200 pt-8">
-                                <p className="text-slate-400 text-sm">
+                            <div className="mt-12 text-center border-t border-border pt-8">
+                                <p className="text-muted-foreground text-sm">
                                     You&apos;ve reached the end of the list
                                 </p>
                             </div>

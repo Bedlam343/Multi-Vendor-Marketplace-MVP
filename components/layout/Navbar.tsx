@@ -59,8 +59,8 @@ export default function Navbar() {
         sticky top-0 z-50 w-full transition-all duration-300
         ${
             isScrolled
-                ? "bg-white/80 backdrop-blur-md border-b border-slate-200 shadow-sm" // Scrolled State (Glass)
-                : "bg-transparent border-b border-slate-200/75" // Top State (Invisible/Clean)
+                ? "bg-card/80 backdrop-blur-md border-b border-border shadow-sm" // Scrolled State (Glass)
+                : "bg-transparent border-b border-border/75" // Top State (Invisible/Clean)
         }
       `}
         >
@@ -70,10 +70,10 @@ export default function Navbar() {
                         href="/dashboard"
                         className="flex items-center gap-2 transition-opacity hover:opacity-90"
                     >
-                        <div className="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center text-white font-bold text-lg shadow-sm">
+                        <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center text-primary-foreground font-bold text-lg shadow-sm">
                             M
                         </div>
-                        <span className="text-xl font-bold text-slate-900 tracking-tight hidden sm:block">
+                        <span className="text-xl font-bold text-foreground tracking-tight hidden sm:block">
                             Marketplace
                         </span>
                     </Link>
@@ -96,7 +96,7 @@ export default function Navbar() {
                 <div className="flex items-center gap-4">
                     <Link
                         href="/create-item"
-                        className="hidden sm:flex items-center gap-2 bg-slate-900 hover:bg-slate-800 text-white text-sm font-medium px-4 py-2 rounded-full transition-all shadow-sm hover:shadow-md active:scale-95"
+                        className="hidden sm:flex items-center gap-2 bg-foreground hover:bg-foreground/90 text-primary-foreground text-sm font-medium px-4 py-2 rounded-full transition-all shadow-sm hover:shadow-md active:scale-95"
                     >
                         <Plus className="w-4 h-4" />
                         <span>Sell Item</span>
@@ -108,11 +108,11 @@ export default function Navbar() {
                             // 3. Update button background to match the cleaner header
                             className={`flex items-center gap-2 p-1 pr-2 rounded-full border transition-colors ${
                                 isScrolled
-                                    ? "border-slate-200 hover:bg-slate-50"
-                                    : "border-slate-200 bg-white hover:bg-slate-50" // Keep button solid white at top
+                                    ? "border-border hover:bg-muted"
+                                    : "border-border bg-card hover:bg-muted" // Keep button solid white at top
                             }`}
                         >
-                            <div className="w-8 h-8 bg-slate-100 rounded-full flex items-center justify-center overflow-hidden border border-white shadow-sm">
+                            <div className="w-8 h-8 bg-muted rounded-full flex items-center justify-center overflow-hidden border border-border shadow-sm">
                                 {user.image ? (
                                     <img
                                         src={user.image}
@@ -120,23 +120,23 @@ export default function Navbar() {
                                         className="w-full h-full object-cover"
                                     />
                                 ) : (
-                                    <UserIcon className="w-4 h-4 text-slate-500" />
+                                    <UserIcon className="w-4 h-4 text-muted-foreground" />
                                 )}
                             </div>
                             <ChevronDown
-                                className={`w-3 h-3 text-slate-400 transition-transform ${
+                                className={`w-3 h-3 text-muted-foreground transition-transform ${
                                     isMenuOpen ? "rotate-180" : ""
                                 }`}
                             />
                         </button>
 
                         {isMenuOpen && (
-                            <div className="absolute right-0 mt-2 w-56 bg-white rounded-xl shadow-lg border border-slate-100 py-2 origin-top-right animate-in fade-in zoom-in-95 duration-200">
-                                <div className="px-4 py-2 border-b border-slate-50 mb-1">
-                                    <p className="text-sm font-medium text-slate-900 truncate">
+                            <div className="absolute right-0 mt-2 w-56 bg-popover rounded-xl shadow-lg border border-border py-2 origin-top-right animate-in fade-in zoom-in-95 duration-200">
+                                <div className="px-4 py-2 border-b border-border mb-1">
+                                    <p className="text-sm font-medium text-foreground truncate">
                                         {user.name}
                                     </p>
-                                    <p className="text-xs text-slate-500 truncate">
+                                    <p className="text-xs text-muted-foreground truncate">
                                         user@example.com
                                     </p>
                                 </div>
@@ -154,10 +154,10 @@ export default function Navbar() {
                                     Settings
                                 </DropdownItem>
 
-                                <div className="border-t border-slate-50 mt-1 pt-1">
+                                <div className="border-t border-border mt-1 pt-1">
                                     <button
                                         onClick={handleLogout}
-                                        className="w-full flex items-center gap-2 px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors"
+                                        className="w-full flex items-center gap-2 px-4 py-2 text-sm text-destructive hover:bg-destructive/10 transition-colors"
                                     >
                                         <LogOut className="w-4 h-4" />
                                         Sign out
@@ -189,8 +189,8 @@ function NavLink({
         flex items-center px-4 py-2 rounded-lg text-sm font-medium transition-all
         ${
             active
-                ? "bg-slate-100 text-slate-900"
-                : "text-slate-500 hover:text-slate-900 hover:bg-slate-50"
+                ? "bg-muted text-foreground"
+                : "text-muted-foreground hover:text-foreground hover:bg-muted"
         }
       `}
         >
@@ -211,7 +211,7 @@ function DropdownItem({
     return (
         <Link
             href={href}
-            className="flex items-center gap-2 px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 hover:text-indigo-600 transition-colors"
+            className="flex items-center gap-2 px-4 py-2 text-sm text-foreground hover:bg-muted hover:text-primary transition-colors"
         >
             {icon}
             {children}

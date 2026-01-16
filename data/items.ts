@@ -60,10 +60,12 @@ export const getItems = async (filters: ItemFilters) => {
             .select({
                 id: items.id,
                 title: items.title,
+                description: items.description,
                 price: items.price,
                 images: items.images,
                 condition: items.condition,
                 createdAt: items.createdAt,
+                status: items.status,
                 seller: {
                     name: user.name,
                     image: user.image,
@@ -85,6 +87,30 @@ export const getItems = async (filters: ItemFilters) => {
             currentPage: page,
         },
     };
+};
+
+export const getItemById = async (id: string) => {
+    const result = await db
+        .select({
+            id: items.id,
+            title: items.title,
+            description: items.description,
+            price: items.price,
+            images: items.images,
+            condition: items.condition,
+            createdAt: items.createdAt,
+            status: items.status,
+            seller: {
+                name: user.name,
+                image: user.image,
+            },
+        })
+        .from(items)
+        .leftJoin(user, eq(items.sellerId, user.id))
+        .where(eq(items.id, id))
+        .limit(1);
+
+    return result[0] || null;
 };
 
 export type GetItemResult = Awaited<ReturnType<typeof getItems>>;

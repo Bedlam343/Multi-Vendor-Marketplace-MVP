@@ -77,10 +77,10 @@ export default function Filters({
     return (
         <div className="space-y-8 animate-in fade-in duration-500">
             <div className="flex items-center justify-between">
-                <h3 className="text-sm font-semibold text-slate-900 flex items-center gap-2">
+                <h3 className="text-sm font-semibold text-foreground flex items-center gap-2">
                     Filters
                     {activeCount > 0 && (
-                        <span className="bg-indigo-100 text-indigo-600 text-[10px] px-2 py-0.5 rounded-full font-bold">
+                        <span className="bg-primary/10 text-primary text-[10px] px-2 py-0.5 rounded-full font-bold">
                             {activeCount}
                         </span>
                     )}
@@ -88,10 +88,10 @@ export default function Filters({
 
                 <button
                     onClick={handleReset}
-                    className={`text-xs text-slate-500  flex items-center gap-1  transition-all duration-300 ease-in-out ${
+                    className={`text-xs text-muted-foreground flex items-center gap-1 transition-all duration-300 ease-in-out ${
                         activeCount === 0
                             ? "opacity-50 cursor-not-allowed"
-                            : "hover:text-red-600"
+                            : "hover:text-destructive"
                     }`}
                     disabled={activeCount === 0}
                 >
@@ -102,22 +102,22 @@ export default function Filters({
 
             {/* --- Inputs (Same as before) --- */}
             <div className="space-y-3">
-                <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">
+                <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
                     Keywords
                 </label>
                 <div className="relative group">
-                    <Search className="absolute left-3 top-2.5 h-4 w-4 text-slate-400 group-focus-within:text-indigo-500 transition-colors" />
+                    <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground/70 group-focus-within:text-primary transition-colors" />
                     <input
                         type="text"
                         placeholder="Search items..."
                         value={localSearch}
                         onChange={(e) => handleSearchChange(e.target.value)}
-                        className="w-full pl-9 pr-9 py-2 bg-white border border-slate-200 rounded-lg text-sm text-slate-900 focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all placeholder:text-slate-400 shadow-sm"
+                        className="w-full pl-9 pr-9 py-2 bg-card border border-border rounded-lg text-sm text-foreground focus:ring-2 focus:ring-ring focus:border-transparent outline-none transition-all placeholder:text-muted-foreground/50 shadow-sm"
                     />
                     {localSearch && (
                         <button
                             onClick={() => handleSearchChange("")}
-                            className="absolute right-3 top-2.5 text-slate-300 hover:text-slate-500"
+                            className="absolute right-3 top-2.5 text-muted-foreground/50 hover:text-muted-foreground"
                         >
                             <X className="w-4 h-4" />
                         </button>
@@ -126,12 +126,12 @@ export default function Filters({
             </div>
 
             <div className="space-y-3">
-                <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">
+                <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
                     Price Range
                 </label>
                 <div className="grid grid-cols-2 gap-3">
                     <div className="relative group">
-                        <DollarSign className="absolute left-3 top-2.5 h-3.5 w-3.5 text-slate-400 group-focus-within:text-indigo-500 transition-colors" />
+                        <DollarSign className="absolute left-3 top-2.5 h-3.5 w-3.5 text-muted-foreground/70 group-focus-within:text-primary transition-colors" />
                         <input
                             type="number"
                             placeholder="Min"
@@ -139,11 +139,11 @@ export default function Filters({
                             onChange={(e) =>
                                 handlePriceChange("minPrice", e.target.value)
                             }
-                            className="w-full pl-8 pr-3 py-2 bg-white border border-slate-200 rounded-lg text-sm text-slate-900 focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all shadow-sm"
+                            className="w-full pl-8 pr-3 py-2 bg-card border border-border rounded-lg text-sm text-foreground focus:ring-2 focus:ring-ring focus:border-transparent outline-none transition-all shadow-sm"
                         />
                     </div>
                     <div className="relative group">
-                        <DollarSign className="absolute left-3 top-2.5 h-3.5 w-3.5 text-slate-400 group-focus-within:text-indigo-500 transition-colors" />
+                        <DollarSign className="absolute left-3 top-2.5 h-3.5 w-3.5 text-muted-foreground/70 group-focus-within:text-primary transition-colors" />
                         <input
                             type="number"
                             placeholder="Max"
@@ -151,14 +151,14 @@ export default function Filters({
                             onChange={(e) =>
                                 handlePriceChange("maxPrice", e.target.value)
                             }
-                            className="w-full pl-8 pr-3 py-2 bg-white border border-slate-200 rounded-lg text-sm text-slate-900 focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all shadow-sm"
+                            className="w-full pl-8 pr-3 py-2 bg-card border border-border rounded-lg text-sm text-foreground focus:ring-2 focus:ring-ring focus:border-transparent outline-none transition-all shadow-sm"
                         />
                     </div>
                 </div>
             </div>
 
             <div className="space-y-3">
-                <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">
+                <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
                     Condition
                 </label>
                 <div className="relative">
@@ -170,7 +170,7 @@ export default function Filters({
                                 e.target.value || undefined
                             )
                         }
-                        className="w-full appearance-none bg-white border border-slate-200 text-slate-900 text-sm rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent block p-2.5 outline-none shadow-sm cursor-pointer hover:border-slate-300 transition-colors"
+                        className="w-full appearance-none bg-card border border-border text-foreground text-sm rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent block p-2.5 outline-none shadow-sm cursor-pointer hover:border-border/80 transition-colors"
                     >
                         <option value="">Any Condition</option>
                         <option value="new">New</option>
@@ -179,7 +179,7 @@ export default function Filters({
                         <option value="fair">Fair</option>
                         <option value="poor">Poor</option>
                     </select>
-                    <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-slate-500">
+                    <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-muted-foreground">
                         <svg
                             className="fill-current h-4 w-4"
                             xmlns="http://www.w3.org/2000/svg"
