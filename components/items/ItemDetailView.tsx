@@ -1,9 +1,21 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useCallback, useEffect } from "react";
 import Image from "next/image";
-import { MessageCircle, ShoppingBag, Clock, ShieldCheck, User, Info, Tag, Calendar } from "lucide-react";
+import { 
+    MessageCircle, 
+    ShoppingBag, 
+    Clock, 
+    ShieldCheck, 
+    User, 
+    Info, 
+    Tag, 
+    Calendar,
+    ChevronLeft,
+    ChevronRight
+} from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
+import useEmblaCarousel from "embla-carousel-react";
 import { type ItemWithSeller } from "@/data/items";
 
 interface ItemDetailViewProps {
@@ -12,174 +24,281 @@ interface ItemDetailViewProps {
 }
 
 export default function ItemDetailView({ item, isModal = false }: ItemDetailViewProps) {
-    const [activeImage, setActiveImage] = useState(0);
+    const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true });
+    const [selectedIndex, setSelectedIndex] = useState(0);
+
+    const scrollPrev = useCallback(() => emblaApi && emblaApi.scrollPrev(), [emblaApi]);
+    const scrollNext = useCallback(() => emblaApi && emblaApi.scrollNext(), [emblaApi]);
+    const scrollTo = useCallback((index: number) => emblaApi && emblaApi.scrollTo(index), [emblaApi]);
+
+    const onSelect = useCallback(() => {
+        if (!emblaApi) return;
+        setSelectedIndex(emblaApi.selectedScrollSnap());
+    }, [emblaApi]);
+
+    useEffect(() => {
+        if (!emblaApi) return;
+        onSelect();
+        emblaApi.on("select", onSelect);
+    }, [emblaApi, onSelect]);
 
     return (
-        <div className={`flex flex-col lg:flex-row bg-card rounded-2xl overflow-hidden ${isModal ? 'max-h-[90vh]' : 'min-h-[600px] shadow-sm border border-border'}`}>
-            {/* Left Side: Images */}
-            <div className={`lg:w-3/5 relative bg-muted/30 flex flex-col ${isModal ? 'min-h-[300px] lg:min-h-0' : 'min-h-[500px]'}`}>
-                <div className="relative flex-1 group">
-                    {item.images && item.images.length > 0 ? (
-                        <Image
-                            src={item.images[activeImage]}
-                            alt={item.title}
-                            fill
-                            className="object-contain p-4 transition-transform duration-500 group-hover:scale-[1.02]"
-                            priority
-                            unoptimized
-                        />
-                    ) : (
-                        <div className="flex items-center justify-center h-full text-muted-foreground">
-                            <span className="text-sm">No Preview Available</span>
+        <div className={`relative flex flex-col bg-card rounded-2xl overflow-hidden ${isModal ? 'max-h-[95vh] w-full' : 'min-h-[600px] shadow-sm border border-border'}`}>
+            
+            {/* Scrollable Content Area */}
+            <div className={`flex-1 ${isModal ? 'overflow-y-auto scrollbar-hide' : ''}`}>
+                {/* Top Section: Slideshow */}
+                <div className="relative group bg-muted/30 shrink-0">
+                    <div className="overflow-hidden" ref={emblaRef}>
+                        <div className="flex">
+                            {item.images && item.images.length > 0 ? (
+                                item.images.map((img, idx) => (
+                                    <div key={idx} className="relative flex-[0_0_100%] min-w-0 aspect-[16/9] sm:aspect-[21/9]">
+                                        <Image
+                                            src={img}
+                                            alt={`${item.title} - Image ${idx + 1}`}
+                                            fill
+                                            className="object-contain p-4 md:p-8"
+                                            priority={idx === 0}
+                                            unoptimized
+                                        />
+                                    </div>
+                                ))
+                            ) : (
+                                <div className="relative flex-[0_0_100%] min-w-0 aspect-[16/9] flex items-center justify-center text-muted-foreground">
+                                    <span className="text-sm">No Preview Available</span>
+                                </div>
+                            )}
                         </div>
+                    </div>
+
+                    {/* Navigation Arrows */}
+                    {item.images && item.images.length > 1 && (
+                        <>
+                            <button
+                                onClick={scrollPrev}
+                                className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-card/60 backdrop-blur-md border border-border flex items-center justify-center text-foreground opacity-0 group-hover:opacity-100 transition-opacity hover:bg-card"
+                                aria-label="Previous slide"
+                            >
+                                <ChevronLeft className="w-6 h-6" />
+                            </button>
+                            <button
+                                onClick={scrollNext}
+                                className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-card/60 backdrop-blur-md border border-border flex items-center justify-center text-foreground opacity-0 group-hover:opacity-100 transition-opacity hover:bg-card"
+                                aria-label="Next slide"
+                            >
+                                <ChevronRight className="w-6 h-6" />
+                            </button>
+
+                            {/* Pagination Dots */}
+                            <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-2">
+                                {item.images.map((_, idx) => (
+                                    <button
+                                        key={idx}
+                                        onClick={() => scrollTo(idx)}
+                                        className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                                            selectedIndex === idx 
+                                                ? 'bg-primary w-6' 
+                                                : 'bg-foreground/20 hover:bg-foreground/40'
+                                        }`}
+                                    />
+                                ))}
+                            </div>
+                        </>
                     )}
                 </div>
 
-                {/* Image Thumbnails */}
-                {item.images && item.images.length > 1 && (
-                    <div className="p-4 flex gap-3 overflow-x-auto bg-card/40 backdrop-blur-md border-t border-border scrollbar-hide">
-                        {item.images.map((img, idx) => (
-                            <button
-                                key={idx}
-                                onClick={() => setActiveImage(idx)}
-                                className={`relative w-20 h-20 rounded-xl overflow-hidden flex-shrink-0 border-2 transition-all duration-200 ${
-                                    activeImage === idx 
-                                        ? 'border-primary ring-4 ring-primary/10 shadow-md' 
-                                        : 'border-transparent opacity-60 hover:opacity-100 hover:scale-105'
-                                }`}
-                            >
-                                <Image
-                                    src={img}
-                                    alt={`${item.title} thumbnail ${idx + 1}`}
-                                    fill
-                                    className="object-cover"
-                                    unoptimized
-                                />
-                            </button>
-                        ))}
-                    </div>
-                )}
-            </div>
+                {/* Sub-divider for physical distinction */}
+                <div className="h-px w-full bg-gradient-to-r from-transparent via-border to-transparent shrink-0" />
 
-            {/* Right Side: Details */}
-            <div className={`lg:w-2/5 flex flex-col ${isModal ? 'overflow-y-auto' : ''}`}>
-                <div className={`flex flex-col flex-1 p-6 lg:p-10 ${isModal ? 'pt-14 lg:pt-14' : ''}`}>
-                    {/* Top Meta Info */}
-                    <div className="flex items-center justify-between mb-6">
-                        <div className="flex items-center gap-2">
-                            <span className="inline-flex items-center px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-primary/10 text-primary border border-primary/20">
-                                {item.status || 'Available'}
-                            </span>
-                            <span className="text-[11px] font-medium text-muted-foreground flex items-center gap-1">
-                                <Clock className="w-3 h-3" />
-                                {formatDistanceToNow(new Date(item.createdAt), { addSuffix: true })}
-                            </span>
-                        </div>
-                    </div>
-
-                    {/* Title & Price */}
-                    <div className="mb-8">
-                        <h2 className="text-3xl font-black text-foreground mb-4 leading-tight tracking-tight">
-                            {item.title}
-                        </h2>
-                        <div className="flex items-baseline gap-2">
-                            <span className="text-4xl font-black text-primary">
-                                ${Number(item.price).toLocaleString()}
-                            </span>
-                            <span className="text-sm font-medium text-muted-foreground">USD</span>
-                        </div>
-                    </div>
-
-                    {/* Quick Specs Grid */}
-                    <div className="grid grid-cols-2 gap-4 mb-8">
-                        <div className="p-4 rounded-2xl bg-muted/50 border border-border flex flex-col gap-1">
-                            <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest flex items-center gap-1.5">
-                                <Tag className="w-3 h-3" />
-                                Condition
-                            </span>
-                            <span className="text-sm font-bold text-foreground capitalize">
-                                {item.condition.replace("-", " ")}
-                            </span>
-                        </div>
-                        <div className="p-4 rounded-2xl bg-muted/50 border border-border flex flex-col gap-1">
-                            <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest flex items-center gap-1.5">
-                                <Calendar className="w-3 h-3" />
-                                Listed
-                            </span>
-                            <span className="text-sm font-bold text-foreground">
-                                {new Date(item.createdAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
-                            </span>
-                        </div>
-                    </div>
-
-                    {/* Description Section */}
-                    <div className="mb-10">
-                        <div className="flex items-center gap-2 mb-3">
-                            <Info className="w-4 h-4 text-accent" />
-                            <h3 className="text-sm font-bold text-foreground uppercase tracking-widest">Details</h3>
-                        </div>
-                        <div className="prose prose-invert prose-sm max-w-none">
-                            <p className="text-muted-foreground leading-relaxed text-base italic">
-                                "{item.description || "The seller has not provided a detailed description for this unique item."}"
-                            </p>
-                        </div>
-                    </div>
-
-                    {/* Seller Info Card */}
-                    <div className="mt-auto pt-8 border-t border-border">
-                        <div className="flex items-center justify-between mb-4">
-                            <h3 className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em]">Curated By</h3>
-                        </div>
-                        <div className="flex items-center gap-4 group">
-                            <div className="w-14 h-14 rounded-2xl bg-primary/5 flex items-center justify-center overflow-hidden relative border-2 border-border shadow-sm transition-transform group-hover:scale-105">
-                                {item.seller?.image ? (
-                                    <Image
-                                        src={item.seller.image}
-                                        alt={item.seller.name || ""}
-                                        fill
-                                        className="object-cover"
-                                        unoptimized
-                                    />
-                                ) : (
-                                    <User className="w-6 h-6 text-primary" />
-                                )}
-                            </div>
-                            <div className="flex-1">
-                                <div className="font-black text-foreground text-lg group-hover:text-primary transition-colors">
-                                    {item.seller?.name || "Anonymous Vendor"}
-                                </div>
-                                <div className="text-xs text-muted-foreground flex items-center gap-1.5 font-medium">
-                                    <div className="w-4 h-4 rounded-full bg-primary flex items-center justify-center">
-                                        <ShieldCheck className="w-2.5 h-2.5 text-primary-foreground" />
+                {/* Bottom Section: Details */}
+                <div className="p-6 md:p-10 lg:p-12">
+                    <div className="max-w-4xl mx-auto space-y-10">
+                        
+                        {/* Header: Title, Price, Status */}
+                        <div className="flex flex-col gap-8 pb-6">
+                            <div className="flex flex-col md:flex-row md:items-end 
+                                justify-between gap-6">
+                                <div className="space-y-4 flex-1">
+                                    <div className="flex items-center gap-3">
+                                        <span className="inline-flex items-center px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-primary/10 text-primary border border-primary/20">
+                                            {item.status || 'Available'}
+                                        </span>
+                                        <span className="text-[11px] font-medium text-muted-foreground flex items-center gap-1">
+                                            <Clock className="w-3 h-3" />
+                                            {formatDistanceToNow(new Date(item.createdAt), { addSuffix: true })}
+                                        </span>
                                     </div>
-                                    Verified Seller
+                                    <h2 className="text-4xl md:text-5xl font-black text-foreground leading-tight tracking-tight">
+                                        {item.title}
+                                    </h2>
+                                </div>
+                                
+                                <div className="flex flex-col items-start md:items-end">
+                                    <div className="flex items-baseline gap-2">
+                                        <span className="text-5xl font-black text-primary">
+                                            ${Number(item.price).toLocaleString()}
+                                        </span>
+                                        <span className="text-sm font-medium text-muted-foreground uppercase tracking-widest">USD</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Action Buttons for non-modal (inline) */}
+                            {!isModal && (
+                                <div className="flex flex-col sm:flex-row gap-4">
+                                    <button 
+                                        className="flex-1 min-w-[200px] py-4 bg-primary hover:bg-primary/90 
+                                        text-primary-foreground font-black rounded-xl transition-all flex 
+                                        items-center justify-center gap-3 active:scale-[0.98] shadow-lg shadow-primary/20"
+                                        onClick={() => alert('Purchase flow!')}
+                                    >
+                                        <ShoppingBag className="w-5 h-5" />
+                                        Buy Now
+                                    </button>
+                                    <button 
+                                        className="flex-1 min-w-[200px] py-4 bg-card border border-border hover:border-primary text-foreground font-bold rounded-xl transition-all flex items-center justify-center gap-3 active:scale-[0.98]"
+                                        onClick={() => alert('Message flow!')}
+                                    >
+                                        <MessageCircle className="w-5 h-5" />
+                                        Message Seller
+                                    </button>
+                                </div>
+                            )}
+                        </div>
+
+                        {/* Quick Specs Grid */}
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                            <div className="p-5 rounded-2xl bg-muted/10 border border-border flex flex-col gap-2 transition-colors hover:bg-muted/20">
+                                <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest flex items-center gap-1.5">
+                                    <Tag className="w-3.5 h-3.5 text-accent" />
+                                    Condition
+                                </span>
+                                <span className="text-base font-bold text-foreground capitalize">
+                                    {item.condition.replace("-", " ")}
+                                </span>
+                            </div>
+                            <div className="p-5 rounded-2xl bg-muted/10 border border-border flex flex-col gap-2 transition-colors hover:bg-muted/20">
+                                <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest flex items-center gap-1.5">
+                                    <Calendar className="w-3.5 h-3.5 text-primary" />
+                                    Listed On
+                                </span>
+                                <span className="text-base font-bold text-foreground">
+                                    {new Date(item.createdAt).toLocaleDateString(undefined, { month: 'long', day: 'numeric', year: 'numeric' })}
+                                </span>
+                            </div>
+                            <div className="p-5 rounded-2xl bg-muted/10 border border-border flex flex-col gap-2 transition-colors hover:bg-muted/20">
+                                <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest flex items-center gap-1.5">
+                                    <ShieldCheck className="w-3.5 h-3.5 text-emerald-500" />
+                                    Protection
+                                </span>
+                                <span className="text-base font-bold text-foreground">
+                                    Full Coverage
+                                </span>
+                            </div>
+                            <div className="p-5 rounded-2xl bg-muted/10 border border-border flex flex-col gap-2 transition-colors hover:bg-muted/20">
+                                <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest flex items-center gap-1.5">
+                                    <User className="w-3.5 h-3.5 text-primary" />
+                                    Availability
+                                </span>
+                                <span className="text-base font-bold text-foreground">
+                                    {item.status.charAt(0).toUpperCase() + item.status.slice(1)}
+                                </span>
+                            </div>
+                        </div>
+
+                        {/* Main Content Layout */}
+                        <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 pt-4">
+                            
+                            {/* Left: Description */}
+                            <div className="lg:col-span-2 space-y-8">
+                                <section className="space-y-6">
+                                    <div className="flex items-center gap-2">
+                                        <Info className="w-5 h-5 text-accent" />
+                                        <h3 className="text-lg font-black text-foreground uppercase tracking-widest">About this item</h3>
+                                    </div>
+                                    <div className="prose prose-invert prose-lg max-w-none">
+                                        <p className="text-muted-foreground leading-relaxed italic">
+                                            "{item.description || "The seller has not provided a detailed description for this unique item."}"
+                                        </p>
+                                    </div>
+                                </section>
+
+                                {/* Separate Marketplace Guarantee Message */}
+                                <div className="p-6 rounded-2xl bg-primary/5 border border-primary/10 flex gap-4 items-start">
+                                    <ShieldCheck className="w-6 h-6 text-primary shrink-0 mt-0.5" />
+                                    <div className="space-y-1">
+                                        <h4 className="text-sm font-bold text-foreground">Marketplace Guarantee</h4>
+                                        <p className="text-xs text-muted-foreground leading-relaxed">
+                                            All items on our marketplace are thoroughly inspected for quality and authenticity. This item is currently held by the seller and is ready for immediate dispatch upon purchase.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Right: Seller Information */}
+                            <div className="space-y-6">
+                                <div className="p-6 rounded-2xl border border-border bg-muted/20">
+                                    <h3 className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em] mb-4">Seller Identity</h3>
+                                    <div className="flex items-center gap-4 group">
+                                        <div className="w-12 h-12 rounded-xl bg-background flex items-center justify-center overflow-hidden relative border border-border shadow-sm">
+                                            {item.seller?.image ? (
+                                                <Image
+                                                    src={item.seller.image}
+                                                    alt={item.seller.name || ""}
+                                                    fill
+                                                    className="object-cover"
+                                                    unoptimized
+                                                />
+                                            ) : (
+                                                <User className="w-6 h-6 text-primary" />
+                                            )}
+                                        </div>
+                                        <div className="flex-1">
+                                            <div className="font-bold text-foreground text-base">
+                                                {item.seller?.name || "Anonymous"}
+                                            </div>
+                                            <div className="text-[10px] text-muted-foreground flex items-center gap-1 font-medium">
+                                                <ShieldCheck className="w-3 h-3 text-primary" />
+                                                Verified Seller
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-
-                    {/* Action Buttons */}
-                    <div className="flex flex-col gap-4 mt-10 pb-4">
-                        <button 
-                            className="w-full h-16 bg-foreground hover:bg-black text-background font-black rounded-2xl shadow-xl shadow-black/20 transition-all flex items-center justify-center gap-3 group active:scale-[0.98] overflow-hidden relative"
-                            onClick={() => alert('Purchase flow would start here!')}
-                        >
-                            <span className="relative z-10 flex items-center gap-3">
-                                <ShoppingBag className="w-5 h-5 group-hover:rotate-12 transition-transform" />
-                                Buy Now
-                            </span>
-                            <div className="absolute inset-0 bg-gradient-to-r from-primary to-accent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                        </button>
-                        <button 
-                            className="w-full h-14 bg-card border-2 border-border hover:border-foreground text-foreground font-bold rounded-2xl transition-all flex items-center justify-center gap-3 active:scale-[0.98] hover:shadow-lg"
-                            onClick={() => alert('Messaging flow would start here!')}
-                        >
-                            <MessageCircle className="w-5 h-5" />
-                            Message Seller
-                        </button>
-                    </div>
+                    {/* Add spacer for the fixed bottom bar on mobile/modal */}
+                    {isModal && <div className="h-24 md:h-28" />}
                 </div>
             </div>
+
+            {/* Floating "Milky" Actions (Modal Only) */}
+            {isModal && (
+                <div className="absolute bottom-6 left-6 right-6 flex flex-col sm:flex-row 
+                gap-4 z-30 pointer-events-none justify-end pr-3">
+                    <button 
+                        className="bg-primary/90 hover:bg-primary/95 text-white 
+                        font-black rounded-2xl backdrop-blur-2xl transition-all flex items-center 
+                        justify-center gap-3 active:scale-[0.98] shadow-2xl shadow-black/40 border 
+                        border-white/20 pointer-events-auto px-6 py-3"
+                        onClick={() => alert('Purchase flow!')}
+                    >
+                        <ShoppingBag className="w-5 h-5" />
+                        Buy Now
+                    </button>
+                    <button 
+                        className="bg-white/10 hover:bg-white/20 text-white font-bold 
+                        rounded-2xl backdrop-blur-2xl transition-all border border-white/10 flex 
+                        items-center justify-center gap-3 active:scale-[0.98] shadow-2xl shadow-black/40 
+                        pointer-events-auto px-6 py-3"
+                        onClick={() => alert('Message flow!')}
+                    >
+                        <MessageCircle className="w-5 h-5" />
+                        Message Seller
+                    </button>
+                </div>
+            )}
         </div>
     );
 }
