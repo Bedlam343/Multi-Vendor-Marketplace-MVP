@@ -12,6 +12,7 @@ import {
     GCS_DOMAIN,
     ITEM_LIMIT_DEFAULT,
     ITEM_LIMIT_MAX,
+    SEPOLIA_CHAIN_ID,
 } from "@/utils/constants";
 
 export const selectUserSchema = createSelectSchema(user);
@@ -118,12 +119,18 @@ export const insertMessageSchema = createInsertSchema(messages, {
 
 /// --- Order Schemas --- ///
 const insertOrderSchema = createInsertSchema(orders, {
-    walletAddress: z
+    txHash: z.string().regex(/^0x([A-Fa-f0-9]{64})$/),
+    chainId: z
+        .number()
+        .min(1, "Chain ID is required")
+        .refine((val) => val === SEPOLIA_CHAIN_ID, "Invalid Chain ID"),
+    amountPaidCrypto: z.string().min(1, "Amount paid is required"),
+    buyerWalletAddress: z
         .string()
         .regex(/^0x[a-fA-F0-9]{40}$/, "Invalid ETH Address"),
-    txHash: z.string().regex(/^0x([A-Fa-f0-9]{64})$/),
-    chainId: z.number().min(1, "Chain ID is required"),
-    amountPaidCrypto: z.string().min(1, "Amount paid is required"),
+    sellerWalletAddress: z
+        .string()
+        .regex(/^0x[a-fA-F0-9]{40}$/, "Invalid ETH Address"),
 
     stripePaymentIntentId: z
         .string()
@@ -138,22 +145,34 @@ const sharedFields = insertOrderSchema.pick({
     amountPaidUsd: true,
 });
 
-export const CreateCryptoOrderSchema = sharedFields
+export const createCryptoOrderSchema = sharedFields
     .extend({
         paymentMethod: z.literal("crypto"),
         ...insertOrderSchema.pick({
             amountPaidCrypto: true,
             txHash: true,
             chainId: true,
-            walletAddress: true,
+            buyerWalletAddress: true,
+            sellerWalletAddress: true,
         }).shape,
     })
     .refine((data) => !!data.txHash, {
         message: "txHash is required for crypto",
     });
-export type CreateCryptoOrderInput = z.infer<typeof CreateCryptoOrderSchema>;
+export type CreateCryptoOrderInput = z.infer<typeof createCryptoOrderSchema>;
 
-export const CreateCardOrderSchema = sharedFields.extend({
+export const createPendingCryptoOrderSchema = createCryptoOrderSchema.omit({
+    paymentMethod: true,
+    chainId: true,
+    buyerId: true,
+    sellerWalletAddress: true,
+    sellerId: true,
+});
+export type CreatePendingCryptoOrderInput = z.infer<
+    typeof createPendingCryptoOrderSchema
+>;
+
+export const createCardOrderSchema = sharedFields.extend({
     paymentMethod: z.literal("card"),
     // Pick card fields from the Drizzle-generated schema
     ...insertOrderSchema.pick({
@@ -162,4 +181,4 @@ export const CreateCardOrderSchema = sharedFields.extend({
         cardLast4: true,
     }).shape,
 });
-export type CreateCardOrderInput = z.infer<typeof CreateCardOrderSchema>;
+export type CreateCardOrderInput = z.infer<typeof createCardOrderSchema>;

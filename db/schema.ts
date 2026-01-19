@@ -143,14 +143,15 @@ export const orders = pgTable("orders", {
     // crypto payment tracking
     txHash: text("txHash").unique(), // unique identifier on the blockchain
     chainId: integer("chainId"), // e.g. 11155111 for Sepolia
-    walletAddress: text("walletAddress"), // the address the buyer used
+    buyerWalletAddress: text("buyerWalletAddress"), // the address the buyer used
+    sellerWalletAddress: text("sellerWalletAddress"), // the address the seller used'
 
     // card payment tracking
     stripePaymentIntentId: text("stripePaymentIntentId").unique(),
     cardBrand: cardBrandEnum("cardBrand"),
     cardLast4: text("cardLast4"),
 
-    status: orderStatusEnum("status").notNull().default("completed"),
+    status: orderStatusEnum("status").notNull().default("pending"),
     createdAt: timestamp("createdAt").notNull().defaultNow(),
     updatedAt: timestamp("updatedAt")
         .notNull()

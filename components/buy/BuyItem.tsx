@@ -21,12 +21,14 @@ import {
 
 import { type NonNullBuyer } from "@/data/user";
 import { type ItemWithSellerWallet } from "@/data/items";
+import { createPendingCryptoOrder } from "@/services/orders/actions";
 import { getEthPriceInUsd } from "@/utils/helpers";
+import { SEPOLIA_CHAIN_ID } from "@/utils/constants";
 
 const client = createThirdwebClient({ clientId: "YOUR_CLIENT_ID_HERE" });
 
 // Sepolia Testnet
-const chain = defineChain(11155111);
+const chain = defineChain(SEPOLIA_CHAIN_ID);
 
 type BuyItemProps = {
     item: ItemWithSellerWallet;
@@ -103,9 +105,28 @@ export default function BuyItem({ item, buyer }: BuyItemProps) {
         });
 
         sendTransaction(transaction, {
-            onSuccess: () => {
-                console.log("Tx Success");
-                setIsSuccess(true);
+            onSuccess: async (txResult) => {
+                console.log("Tx Success", txResult);
+
+                // immediately create pending order
+                const result = await createPendingCryptoOrder({
+                    itemId: item.id,
+                    amountPaidCrypto: totalEth,
+                    amountPaidUsd: String(totalUsd),
+                    txHash: txResult.transactionHash,
+                    buyerWalletAddress: account.address,
+                });
+
+                if (result.success) {
+                    console.log("Order Created", result.orderId);
+                    setIsSuccess(true);
+
+                    // TO DO: start polling for order status
+                } else {
+                    alert(
+                        "Payment sent, but failed to create order. Please contact support.",
+                    );
+                }
             },
             onError: (error) => {
                 console.error("Tx Failed", error);

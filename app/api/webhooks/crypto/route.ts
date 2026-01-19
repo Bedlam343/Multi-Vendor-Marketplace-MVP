@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { verifyAlchemySignature } from "@/lib/alchemy";
+import { finalizeCryptoOrder } from "@/services/orders/internal";
 
 export async function POST(request: Request) {
     try {
@@ -27,7 +28,19 @@ export async function POST(request: Request) {
 
         // on Ethereum/Sepolia, status 1 = Success, 0 = Reverted/Failed
         if (tx.status === 1) {
-            // call service layer here to update database here...
+            const result = await finalizeCryptoOrder({
+                hash: tx.hash,
+                from: tx.from,
+                to: tx.to,
+                value: tx.value,
+            });
+
+            if (result.success) {
+                return NextResponse.json({ success: true, status: "success" });
+            }
+
+            console.error("Failed to finalize order:", result);
+            return NextResponse.json({ success: false, status: result.status });
         }
 
         console.log(`Transaction ${tx.hash} failed on-chain. Skipping.`);
