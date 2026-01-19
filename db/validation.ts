@@ -144,23 +144,16 @@ const sharedFields = insertOrderSchema.pick({
     sellerId: true,
     amountPaidUsd: true,
 });
-
-export const createCryptoOrderSchema = sharedFields
-    .extend({
-        paymentMethod: z.literal("crypto"),
-        ...insertOrderSchema.pick({
-            amountPaidCrypto: true,
-            txHash: true,
-            chainId: true,
-            buyerWalletAddress: true,
-            sellerWalletAddress: true,
-        }).shape,
-    })
-    .refine((data) => !!data.txHash, {
-        message: "txHash is required for crypto",
-    });
-export type CreateCryptoOrderInput = z.infer<typeof createCryptoOrderSchema>;
-
+export const createCryptoOrderSchema = sharedFields.extend({
+    paymentMethod: z.literal("crypto"),
+    ...insertOrderSchema.pick({
+        amountPaidCrypto: true,
+        txHash: true,
+        chainId: true,
+        buyerWalletAddress: true,
+        sellerWalletAddress: true,
+    }).shape,
+});
 export const createPendingCryptoOrderSchema = createCryptoOrderSchema.omit({
     paymentMethod: true,
     chainId: true,
@@ -168,6 +161,7 @@ export const createPendingCryptoOrderSchema = createCryptoOrderSchema.omit({
     sellerWalletAddress: true,
     sellerId: true,
 });
+export type CreateCryptoOrderInput = z.infer<typeof createCryptoOrderSchema>;
 export type CreatePendingCryptoOrderInput = z.infer<
     typeof createPendingCryptoOrderSchema
 >;
