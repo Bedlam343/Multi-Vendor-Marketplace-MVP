@@ -80,4 +80,47 @@ export async function createPendingCryptoOrder(
     });
 }
 
-export async function checkOrderStatus(orderId: string) {}
+export async function checkOrderStatus(orderId: string) {
+    return authenticatedAction(orderId, async (id, session) => {
+        try {
+            const order = await db.query.orders.findFirst({
+                where: eq(orders.id, id),
+            });
+
+            if (!order) {
+                return {
+                    success: false,
+                    status: "failed",
+                    message: "Order not found",
+                };
+            }
+
+            // Ensure only the buyer or seller can check the status
+            if (
+                order.buyerId !== session.user.id &&
+                order.sellerId !== session.user.id
+            ) {
+                return {
+                    success: false,
+                    status: "failed",
+                    message: "Unauthorized",
+                };
+            }
+
+            // Map DB status to component expectations if needed
+            // The component expects "completed" or "failed"
+            let status = order.status;
+            if (order.status === "cancelled" || order.status === "refunded") {
+                status = "failed" as any;
+            }
+
+            return {
+                success: true,
+                status: status,
+            };
+        } catch (error) {
+            console.error("Error checking order status:", error);
+            return { success: false, status: "failed" };
+        }
+    });
+}

@@ -12,10 +12,15 @@ type CryptoTxData = {
 export async function finalizeCryptoOrder(txData: CryptoTxData) {
     const existingOrder = await db.query.orders.findFirst({
         where: eq(orders.txHash, txData.hash),
-        with: {
-            seller: true,
-        },
     });
+
+    // --- OPTIONAL: Fetch Seller (If you need to send them an email later) ---
+    // If you strictly wanted 2 calls, this is how you do it:
+    /*
+    const seller = await db.query.user.findFirst({
+        where: eq(user.id, existingOrder.sellerId)
+    });
+    */
 
     if (existingOrder) {
         if (existingOrder.status === "completed") {

@@ -7,7 +7,7 @@
             "password": "Password123!",
             "emailVerified": true,
             "image": "https://api.dicebear.com/7.x/avataaars/svg?seed=Jagi",
-            "cryptoWalletAddress": "0x5381BDC5a9DBDF92cE87c6F06f97B50c37095d04",
+            "cryptoWalletAddress": "0x15a1402C6ccCCb393B2F78983B5cf29b87FD1464",
             "stripeCustomerId": "cus_test_jagi_99",
             "savedCardBrand": "visa",
             "savedCardLast4": "4242"
@@ -31,7 +31,7 @@
             "password": "Password123!",
             "emailVerified": true,
             "image": "https://api.dicebear.com/7.x/avataaars/svg?seed=Mike",
-            "cryptoWalletAddress": "0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC",
+            "cryptoWalletAddress": "0x15a1402C6ccCCb393B2F78983B5cf29b87FD1464",
             "stripeCustomerId": null,
             "savedCardBrand": null,
             "savedCardLast4": null
@@ -55,7 +55,7 @@
             "password": "Password123!",
             "emailVerified": true,
             "image": "https://api.dicebear.com/7.x/avataaars/svg?seed=David",
-            "cryptoWalletAddress": "0x90F79bf6EB2c4f870365E785982E1f101E93b906",
+            "cryptoWalletAddress": "0x15a1402C6ccCCb393B2F78983B5cf29b87FD1464",
             "stripeCustomerId": "cus_L123091283",
             "savedCardBrand": "visa",
             "savedCardLast4": "1111"
@@ -67,7 +67,7 @@
             "password": "Password123!",
             "emailVerified": true,
             "image": "https://api.dicebear.com/7.x/avataaars/svg?seed=Alex",
-            "cryptoWalletAddress": "0x71C7656EC7ab88b098defB751B7401B5f6d8976F",
+            "cryptoWalletAddress": "0x15a1402C6ccCCb393B2F78983B5cf29b87FD1464",
             "stripeCustomerId": null,
             "savedCardBrand": null,
             "savedCardLast4": null
@@ -91,7 +91,7 @@
             "password": "Password123!",
             "emailVerified": true,
             "image": "https://api.dicebear.com/7.x/avataaars/svg?seed=Tom",
-            "cryptoWalletAddress": "0xA1234567890abcdef1234567890abcdef12345",
+            "cryptoWalletAddress": "0x15a1402C6ccCCb393B2F78983B5cf29b87FD1464",
             "stripeCustomerId": null,
             "savedCardBrand": null,
             "savedCardLast4": null

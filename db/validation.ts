@@ -168,7 +168,6 @@ export type CreatePendingCryptoOrderInput = z.infer<
 
 export const createCardOrderSchema = sharedFields.extend({
     paymentMethod: z.literal("card"),
-    // Pick card fields from the Drizzle-generated schema
     ...insertOrderSchema.pick({
         stripePaymentIntentId: true,
         cardBrand: true,
