@@ -70,3 +70,49 @@ export async function finalizeCryptoOrder(txData: CryptoTxData) {
     console.error(`⚠️ Unrecognized Hash: ${txData.hash}`);
     return { success: false, status: "no_pending_order" };
 }
+
+export async function finalizeCardOrder(stripePaymentIntentId: string) {
+    let existingOrder = await db.query.orders.findFirst({
+        where: eq(orders.stripePaymentIntentId, stripePaymentIntentId),
+    });
+
+    // 2 second grace period for race condition (stripe webhook is FAST!)
+    if (!existingOrder) {
+        console.warn(
+            `Order with ${stripePaymentIntentId} not found. Retrying in 2 seconds...`,
+        );
+        await new Promise((resolve) => setTimeout(resolve, 2000));
+        existingOrder = await db.query.orders.findFirst({
+            where: eq(orders.stripePaymentIntentId, stripePaymentIntentId),
+        });
+    }
+
+    if (!existingOrder) {
+        return { success: false, status: "order_not_found" };
+    }
+
+    if (existingOrder.status === "completed") {
+        console.log("Order already completed. Skipping.");
+        return { success: true, status: "already_processed" };
+    }
+
+    try {
+        await db.transaction(async (tx) => {
+            await tx
+                .update(orders)
+                .set({ status: "completed" })
+                .where(eq(orders.id, existingOrder.id));
+
+            // mark item as sold
+            await tx
+                .update(items)
+                .set({ status: "sold" })
+                .where(eq(items.id, existingOrder.itemId));
+        });
+
+        return { success: true, status: "completed" };
+    } catch (error) {
+        console.error("Error finalizing order:", error);
+        return { success: false, status: "db_error" };
+    }
+}

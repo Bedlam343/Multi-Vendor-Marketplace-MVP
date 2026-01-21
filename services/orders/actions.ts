@@ -92,6 +92,10 @@ export async function createPendingCardOrder(
 ) {
     return authenticatedAction(input, async ({ stripePaymentId }, session) => {
         try {
+            console.log(
+                "Creating pending card order for payment intent:",
+                stripePaymentId,
+            );
             const paymentIntent = await stripe.paymentIntents.retrieve(
                 stripePaymentId,
                 {
@@ -107,7 +111,7 @@ export async function createPendingCardOrder(
                 };
             }
 
-            const itemId = paymentIntent.metadata.itemtId;
+            const itemId = paymentIntent.metadata.itemId;
             if (!itemId) {
                 console.error("Item ID not found in payment intent metadata");
                 return {
@@ -186,6 +190,8 @@ export async function createPendingCardOrder(
 
                 return newOrder.id;
             });
+
+            console.log("Pending card order created successfully", orderId);
 
             return {
                 success: true,
