@@ -22,7 +22,7 @@
             "cryptoWalletAddress": "0x15a1402C6ccCCb393B2F78983B5cf29b87FD1464",
             "stripeCustomerId": "cus_test_sarah_44",
             "savedCardBrand": "mastercard",
-            "savedCardLast4": "8822"
+            "savedCardLast4": "4242"
         },
         {
             "id": "user_3",
@@ -46,7 +46,7 @@
             "cryptoWalletAddress": null,
             "stripeCustomerId": "cus_K293812300",
             "savedCardBrand": "amex",
-            "savedCardLast4": "1005"
+            "savedCardLast4": "4242"
         },
         {
             "id": "user_5",
@@ -58,7 +58,7 @@
             "cryptoWalletAddress": "0x15a1402C6ccCCb393B2F78983B5cf29b87FD1464",
             "stripeCustomerId": "cus_L123091283",
             "savedCardBrand": "visa",
-            "savedCardLast4": "1111"
+            "savedCardLast4": "4242"
         },
         {
             "id": "user_6",
@@ -82,7 +82,7 @@
             "cryptoWalletAddress": null,
             "stripeCustomerId": "cus_test_jess_55",
             "savedCardBrand": "visa",
-            "savedCardLast4": "5555"
+            "savedCardLast4": "4242"
         },
         {
             "id": "user_8",
@@ -100,139 +100,107 @@
     "items": [
         {
             "id": "item_1",
-            "sellerId": "user_1",
-            "title": "Vintage Mechanical Keyboard",
-            "description": "Clicky blue switches, slightly dusty but works perfectly. Ideal for typists.",
-            "price": "85.00",
+            "sellerId": "user_2",
+            "title": "Vintage 1970s Leather Biker Jacket",
+            "description": "Genuine heavy-grain leather with authentic patina. All zippers work perfectly. Fits like a men's medium. Some minor scuffing on the elbows adds to the character.",
+            "price": "185.0",
             "condition": "good",
             "status": "available",
-            "images": ["https://picsum.photos/seed/kb/400/400"]
+            "images": [
+                "https://storage.googleapis.com/marketplace-listing-data/listing-images/SbAURrEjm2vtIJswJTKRsJKK4QQZjOFj/bae866f9-75bf-4e42-9045-61eec984bc10.jpeg"
+            ]
         },
         {
             "id": "item_2",
-            "sellerId": "user_3",
-            "title": "Refurbished Macbook Air M2",
-            "description": "Midnight color, 16GB RAM. Like new condition. Original box included.",
-            "price": "950.00",
-            "condition": "like-new",
+            "sellerId": "user_2",
             "status": "available",
-            "images": ["https://picsum.photos/seed/mac/400/400"]
+            "images": [
+                "https://storage.googleapis.com/marketplace-listing-data/listing-images/SbAURrEjm2vtIJswJTKRsJKK4QQZjOFj/7ca5b949-09f6-41b0-a47c-4df7da804bd3.webp"
+            ],
+            "title": "Handmade Walnut Coffee Table",
+            "description": "Custom built solid walnut table with steel hairpin legs. Finished with natural tung oil. Dimensions: 48\"L x 24\"W x 18\"H. Beautiful wood grain patterns.",
+            "price": 425.0,
+            "condition": "new"
         },
         {
             "id": "item_3",
-            "sellerId": "user_1",
-            "title": "Sony A7III Camera Body",
-            "description": "Used for 2 years, shutter count 15k. Great condition.",
-            "price": "1200.00",
-            "condition": "good",
+            "sellerId": "user_8",
             "status": "available",
-            "images": ["https://picsum.photos/seed/camera/400/400"]
+            "images": [
+                "https://storage.googleapis.com/marketplace-listing-data/listing-images/ECh7fPgWilH9GMCC21JEQbCNV0x5bYWa/b8d5af0c-3eb3-4b68-8872-b6c5ee4ba963.webp"
+            ],
+            "title": "Mechanical Keyboard - Keychron Q1 Custom",
+            "description": "Fully assembled with Gateron Oil King switches and PBT keycaps. Aluminum body feels very premium and heavy. Hot-swappable PCB.",
+            "price": 160.0,
+            "condition": "like-new"
         },
         {
             "id": "item_4",
-            "sellerId": "user_3",
-            "title": "Herman Miller Aeron Chair",
-            "description": "Size B, fully loaded. Mesh is perfect. Pick up only.",
-            "price": "450.00",
-            "condition": "good",
+            "sellerId": "user_5",
             "status": "available",
-            "images": ["https://picsum.photos/seed/chair/400/400"]
+            "images": [
+                "https://storage.googleapis.com/marketplace-listing-data/listing-images/ZsJlNgs4Vlkq7UggkmGh4OWwexdnrXpk/32b4434b-01cc-42d8-aed9-3f4001f8eca1.webp"
+            ],
+            "title": "Outdoor Camping Tent - 4 Person Capacity",
+            "description": "Used for three seasons. No tears or leaks, but some slight mud staining on the rainfly. All poles and stakes are included. Easy 10-minute setup.",
+            "price": 75.0,
+            "condition": "fair"
         },
         {
             "id": "item_5",
-            "sellerId": "user_6",
-            "title": "iPhone 13 Mini 128GB",
-            "description": "Green color, battery health 88%. Includes case.",
-            "price": "300.00",
-            "condition": "fair",
+            "sellerId": "user_5",
             "status": "available",
-            "images": ["https://picsum.photos/seed/iphone/400/400"]
+            "images": [
+                "https://storage.googleapis.com/marketplace-listing-data/listing-images/ZsJlNgs4Vlkq7UggkmGh4OWwexdnrXpk/b48da933-1921-4056-8710-0299df1e42a7.webp"
+            ],
+            "title": "Noise Canceling Headphones",
+            "description": "Brand new, never opened. Received as a gift but I already own a pair. Industry-leading noise cancellation and 30-hour battery life.",
+            "price": 320.0,
+            "condition": "new"
         },
         {
             "id": "item_6",
-            "sellerId": "user_1",
-            "title": "Leather Weekend Bag",
-            "description": "Genuine leather, handmade. Never used. Smells great.",
-            "price": "120.00",
-            "condition": "new",
+            "sellerId": "user_6",
             "status": "available",
-            "images": ["https://picsum.photos/seed/bag/400/400"]
+            "images": [
+                "https://storage.googleapis.com/marketplace-listing-data/listing-images/zDpOQ2RWgLhz4EG1RIUI3PPdDlEoDqOU/98b80916-832c-41bb-85b4-01115ebdd177.webp"
+            ],
+            "title": "Classic Office Chair - Size B",
+            "description": "A classic office chair. Features lumbar support and adjustable armrests. Mesh is in perfect condition with no sagging. Slight scratches on the base from normal use.",
+            "price": 550.0,
+            "condition": "fair"
         },
         {
             "id": "item_7",
             "sellerId": "user_6",
-            "title": "Nintendo Switch OLED",
-            "description": "White joycons, screen protector applied since day 1.",
-            "price": "280.00",
-            "condition": "like-new",
-            "status": "available",
-            "images": ["https://picsum.photos/seed/switch/400/400"]
-        },
-        {
-            "id": "item_8",
-            "sellerId": "user_3",
-            "title": "Vintage Denim Jacket",
-            "description": "Levis oversized jacket from the 90s. Classic wash.",
-            "price": "65.00",
-            "condition": "good",
-            "status": "available",
-            "images": ["https://picsum.photos/seed/jacket/400/400"]
-        },
-        {
-            "id": "item_9",
-            "sellerId": "user_5",
-            "title": "AirPods Pro 2nd Gen",
-            "description": "Lost the case, selling buds only. Sanitized.",
-            "price": "80.00",
-            "condition": "fair",
-            "status": "available",
-            "images": ["https://picsum.photos/seed/airpods/400/400"]
-        },
-        {
-            "id": "item_10",
-            "sellerId": "user_1",
-            "title": "Dyson V11 Vacuum",
+            "title": "Vacuum Cleaner",
             "description": "Works great, just upgraded to the V15. Attachments included.",
             "price": "250.00",
             "condition": "good",
             "status": "available",
-            "images": ["https://picsum.photos/seed/dyson/400/400"]
+            "images": [
+                "https://storage.googleapis.com/marketplace-listing-data/listing-images/zDpOQ2RWgLhz4EG1RIUI3PPdDlEoDqOU/1adf86f2-52db-4260-b769-23d1e984a013.webp",
+                "https://storage.googleapis.com/marketplace-listing-data/listing-images/zDpOQ2RWgLhz4EG1RIUI3PPdDlEoDqOU/9ee290df-8fef-42c5-9834-1fba373672c0.webp",
+                "https://storage.googleapis.com/marketplace-listing-data/listing-images/zDpOQ2RWgLhz4EG1RIUI3PPdDlEoDqOU/dac837f0-6ecd-47a8-8e46-4efa8812f34a.webp"
+            ]
         },
         {
-            "id": "item_11",
-            "sellerId": "user_6",
-            "title": "Kindle Paperwhite",
-            "description": "Previous gen, waterproof. No ads.",
-            "price": "75.00",
-            "condition": "good",
-            "status": "available",
-            "images": ["https://picsum.photos/seed/kindle/400/400"]
-        },
-        {
-            "id": "item_12",
+            "id": "item_8",
             "sellerId": "user_1",
-            "title": "Fujifilm X100V",
-            "description": "Silver. Barely used. Comes with hood. Very sought after.",
-            "price": "1400.00",
-            "condition": "like-new",
-            "status": "available",
-            "images": ["https://picsum.photos/seed/fuji/400/400"]
-        },
-        {
-            "id": "item_13",
-            "sellerId": "user_3",
             "title": "PS5 Digital Edition",
             "description": "Includes one controller and HDMI 2.1 cable.",
             "price": "350.00",
             "condition": "good",
             "status": "available",
-            "images": ["https://picsum.photos/seed/ps5/400/400"]
+            "images": [
+                "https://storage.googleapis.com/marketplace-listing-data/listing-images/A9tWXtM1QKvJSMoMylKwiqzOrjpkaQEl/c302f6d9-5377-45a1-ba9f-c9bed708488e.webp"
+            ]
         },
         {
-            "id": "item_14",
-            "sellerId": "user_6",
-            "title": "Mid-Century Modern Lamp",
-            "description": "Original 1960s desk lamp. Rewired for safety.",
+            "id": "item_9",
+            "sellerId": "user_1",
+            "title": "Modern Lamp",
+            "description": "Original 1960s lamp. Rewired for safety.",
             "price": "180.00",
             "condition": "good",
             "status": "available",

@@ -40,7 +40,6 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-notes.md
 gs-service-account.json
 gcs-cors.json
-local.ts
+local_data

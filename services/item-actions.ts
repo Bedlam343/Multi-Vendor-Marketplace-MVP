@@ -16,11 +16,12 @@ export type CreateItemActionResponse = {
     success?: boolean;
     message?: string;
     errors?: CreateItemFieldErrors;
+    newItemId?: string;
 };
 
 export const createItemAction = async (
     prevState: CreateItemActionResponse | undefined,
-    formData: FormData
+    formData: FormData,
 ): Promise<CreateItemActionResponse> => {
     return authenticatedAction(formData, async (data, session) => {
         // The frontend loop must append them like: formData.append('images', url1); formData.append('images', url2);
@@ -75,17 +76,22 @@ export const createItemAction = async (
                     .where(eq(items.id, newItemId));
 
                 console.log(
-                    `Background: Embedding generated for item ${newItemId}`
+                    `Background: Embedding generated for item ${newItemId}`,
                 );
             } catch (error) {
                 console.error(
                     "Background error generating embedding for item:",
-                    error
+                    error,
                 );
             }
         });
 
         revalidatePath("/dashboard");
-        redirect("/dashboard");
+
+        return {
+            success: true,
+            message: "Item created successfully.",
+            newItemId,
+        };
     });
 };

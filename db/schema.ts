@@ -1,3 +1,5 @@
+import "server-only";
+
 import {
     pgTable,
     text,
@@ -6,9 +8,16 @@ import {
     uuid,
     decimal,
     vector,
-    pgEnum,
     integer,
 } from "drizzle-orm/pg-core";
+
+import {
+    itemConditionEnum,
+    itemStatusEnum,
+    orderStatusEnum,
+    paymentMethodEnum,
+    cardBrandEnum,
+} from "@/utils/enums";
 
 // User Table and Session Table for Better Auth Integration
 export const user = pgTable("user", {
@@ -59,22 +68,6 @@ export const account = pgTable("account", {
     updatedAt: timestamp("updatedAt").notNull().defaultNow(),
 });
 
-/* --- ENUMS --- */
-export const itemConditionEnum = pgEnum("item_condition", [
-    "new",
-    "like-new",
-    "good",
-    "fair",
-    "poor",
-]);
-
-export const itemStatusEnum = pgEnum("item_status", [
-    "available",
-    "sold",
-    "reserved",
-]);
-/* --- */
-
 // Marketplace Data Tables
 export const items = pgTable("items", {
     id: uuid("id").primaryKey().defaultRandom(),
@@ -104,20 +97,6 @@ export const messages = pgTable("messages", {
     createdAt: timestamp("createdAt").notNull().defaultNow(),
 });
 
-export const orderStatusEnum = pgEnum("order_status", [
-    "pending",
-    "completed",
-    "cancelled",
-    "refunded",
-]);
-export const paymentMethodEnum = pgEnum("paymentMethod", ["card", "crypto"]);
-export const cardBrandEnum = pgEnum("cardBrand", [
-    "visa",
-    "mastercard",
-    "amex",
-    "discover",
-    "other",
-]);
 export const orders = pgTable("orders", {
     id: uuid("id").primaryKey().defaultRandom(),
     itemId: uuid("itemId")

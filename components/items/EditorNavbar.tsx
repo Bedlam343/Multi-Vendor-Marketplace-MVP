@@ -1,15 +1,23 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-import { Sparkles, FileText, X } from "lucide-react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { Sparkles, X } from "lucide-react";
 
 export default function EditorNavbar() {
     const router = useRouter();
+    const searchParams = useSearchParams();
+    const isSuccess = searchParams.get("status") === "success";
 
     const handleExit = (e: React.MouseEvent) => {
-        e.preventDefault(); // Stop instant navigation
+        e.preventDefault();
 
-        // Native browser confirm dialog (Simple & Robust)
+        // If we are in success state, just go. No warning needed.
+        if (isSuccess) {
+            router.push("/dashboard");
+            return;
+        }
+
+        // Otherwise, warn the user.
         const confirmed = window.confirm(
             "Are you sure you want to leave? Your draft will be lost.",
         );
@@ -21,8 +29,8 @@ export default function EditorNavbar() {
 
     return (
         <nav className="h-16 border-b bg-card/80 backdrop-blur-md sticky top-0 z-50">
-            <div className="max-w-5xl mx-auto px-4 h-full grid grid-cols-3 items-center">
-                {/* Left: Logo (Acts as Exit Button) */}
+            <div className="max-w-3xl mx-auto px-4 h-full grid grid-cols-3 items-center">
+                {/* Left: Logo */}
                 <div className="flex justify-start">
                     <a
                         href="/dashboard"
@@ -40,22 +48,16 @@ export default function EditorNavbar() {
 
                 {/* Center: Context */}
                 <div className="flex justify-center items-center gap-2">
-                    {/* <div className="p-1.5 bg-primary/10 rounded-md text-primary">
+                    <div className="p-1.5 bg-primary/10 rounded-md text-primary">
                         <Sparkles className="w-4 h-4" />
-                    </div> */}
+                    </div>
                     <span className="font-bold text-foreground tracking-tight">
                         Create Item
                     </span>
                 </div>
 
-                {/* Right: Draft Status & Close */}
+                {/* Right: Close */}
                 <div className="flex justify-end items-center gap-4">
-                    {/* <div className="flex items-center gap-1.5 text-xs text-muted-foreground bg-secondary/50 px-2 py-1 rounded-md border border-border">
-                        <FileText className="w-3.5 h-3.5" />
-                        <span>Draft</span>
-                    </div> */}
-
-                    {/* Explicit Close Button for clarity */}
                     <button
                         onClick={handleExit}
                         className="p-2 text-muted-foreground hover:text-foreground hover:bg-muted rounded-full transition-colors"

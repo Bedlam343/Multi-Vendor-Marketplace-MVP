@@ -1,18 +1,13 @@
 import { z } from "zod";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
-import {
-    user,
-    items,
-    messages,
-    itemConditionEnum,
-    orders,
-    cardBrandEnum,
-} from "@/db/schema";
+import { user, items, messages, orders } from "@/db/schema";
+import { itemConditionEnum, cardBrandEnum } from "@/utils/enums";
 import {
     GCS_DOMAIN,
     ITEM_LIMIT_DEFAULT,
     ITEM_LIMIT_MAX,
     SEPOLIA_CHAIN_ID,
+    MAX_ITEM_IMAGES,
 } from "@/utils/constants";
 
 export const selectUserSchema = createSelectSchema(user);
@@ -78,7 +73,7 @@ export const insertItemSchema = createInsertSchema(items, {
                 ),
         )
         .min(1, "At least one image is required")
-        .max(5, "You can upload a maximum of 5 images"),
+        .max(MAX_ITEM_IMAGES, "You can upload a maximum of 5 images"),
 }).omit({
     id: true,
     createdAt: true,
