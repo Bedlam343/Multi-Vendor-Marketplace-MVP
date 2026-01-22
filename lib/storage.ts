@@ -1,3 +1,5 @@
+"server-only";
+
 import { Storage } from "@google-cloud/storage";
 
 export const storage = new Storage({ keyFilename: "gs-service-account.json" });
@@ -11,6 +13,6 @@ if (!BUCKET_NAME) {
 
 if (!LISTING_IMAGES_DIR) {
     throw new Error(
-        "GCP_LISTING_IMAGES_DIR is missing from environment variables"
+        "GCP_LISTING_IMAGES_DIR is missing from environment variables",
     );
 }

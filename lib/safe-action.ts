@@ -1,5 +1,3 @@
-// wrapped that protects routes or actions that require authentication
-
 "use server";
 
 import { auth } from "@/lib/auth";
