@@ -31,7 +31,16 @@ export async function createPendingCryptoOrder(
         const item = await db.query.items.findFirst({
             where: eq(items.id, data.itemId),
         });
-        if (!item) return { success: false, message: "Item not found" };
+        if (!item)
+            return { success: false, message: "Item not found", data: null };
+
+        if (item.sellerId === session.user.id) {
+            return {
+                success: false,
+                message: "You cannot purchase your own item.",
+                data: null,
+            };
+        }
 
         // fetch the seller
         const seller = await db.query.user.findFirst({
@@ -127,6 +136,14 @@ export async function createPendingCardOrder(
             });
 
             if (!item) return { success: false, message: "Item not found." };
+
+            if (item.sellerId === session.user.id) {
+                return {
+                    success: false,
+                    message: "You cannot purchase your own item.",
+                    data: null,
+                };
+            }
 
             // TO DO: implement the refund if oversell
             if (item.status !== "available") {
@@ -234,6 +251,14 @@ export async function createStripePaymentIntent(itemId: string) {
             return {
                 success: false,
                 message: "Item not found",
+                data: null,
+            };
+        }
+
+        if (item.sellerId === session.user.id) {
+            return {
+                success: false,
+                message: "You cannot purchase your own item.",
                 data: null,
             };
         }

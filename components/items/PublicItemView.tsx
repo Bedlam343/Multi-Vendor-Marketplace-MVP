@@ -19,15 +19,15 @@ import useEmblaCarousel from "embla-carousel-react";
 import { type ItemWithSeller } from "@/data/items";
 import Link from "next/link";
 
-interface ItemDetailViewProps {
+interface PublicItemViewProps {
     item: ItemWithSeller;
     isModal?: boolean;
 }
 
-export default function ItemDetailView({
+export default function PublicItemView({
     item,
     isModal = false,
-}: ItemDetailViewProps) {
+}: PublicItemViewProps) {
     const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true });
     const [selectedIndex, setSelectedIndex] = useState(0);
 
