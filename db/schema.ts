@@ -16,6 +16,7 @@ import {
     paymentMethodEnum,
     cardBrandEnum,
 } from "@/utils/enums";
+import { PG_VECTOR_DIMENSION } from "@/utils/constants";
 
 // User Table and Session Table for Better Auth Integration
 export const user = pgTable("user", {
@@ -78,7 +79,7 @@ export const items = pgTable("items", {
     condition: itemConditionEnum("condition").notNull(),
     status: itemStatusEnum("status").notNull().default("available"),
     images: text("images").array().notNull(),
-    embedding: vector("embedding", { dimensions: 1536 }), // Optimized for OpenAI
+    embedding: vector("embedding", { dimensions: PG_VECTOR_DIMENSION }),
     createdAt: timestamp("createdAt").notNull().defaultNow(),
     updatedAt: timestamp("updatedAt").notNull().defaultNow(),
 });

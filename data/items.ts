@@ -1,6 +1,3 @@
-// data layer for fetching items with filters
-// doesn't care how it's called, just provides the data
-
 import { desc, eq, and, gte, lte, count, sql } from "drizzle-orm";
 import { db } from "@/db";
 import { items, user } from "@/db/schema";
@@ -38,17 +35,35 @@ export const getItems = async (filters: ItemFilters) => {
     if (maxPrice) whereConditions.push(lte(items.price, maxPrice.toString()));
 
     let orderBy = desc(items.createdAt);
+    let dynamicSelection = {
+        id: items.id,
+        title: items.title,
+        description: items.description,
+        price: items.price,
+        images: items.images,
+        condition: items.condition,
+        createdAt: items.createdAt,
+        status: items.status,
+        seller: {
+            name: user.name,
+            image: user.image,
+        },
+
+        similarity: sql<number>`NULL`,
+    };
 
     if (search) {
         const searchEmbedding = await generateEmbedding(search);
         const vectorStr = JSON.stringify(searchEmbedding);
 
-        const similarity = sql`1 - (${items.embedding} <=> ${vectorStr}::vector)`;
+        // This is the "Computed Column" logic
+        const similarityScore = sql<number>`1 - (${items.embedding} <=> ${vectorStr}::vector)`;
 
-        // Only include items with similarity above a threshold
-        whereConditions.push(sql`${similarity} > ${SIMILARITY_THRESHOLD}`);
+        whereConditions.push(sql`${similarityScore} > ${SIMILARITY_THRESHOLD}`);
 
-        orderBy = desc(similarity);
+        // Update the selection to include the real score
+        dynamicSelection.similarity = similarityScore;
+        orderBy = desc(similarityScore);
     }
 
     const [totalResult, rows] = await Promise.all([
@@ -57,20 +72,7 @@ export const getItems = async (filters: ItemFilters) => {
             .from(items)
             .where(and(...whereConditions)),
         db
-            .select({
-                id: items.id,
-                title: items.title,
-                description: items.description,
-                price: items.price,
-                images: items.images,
-                condition: items.condition,
-                createdAt: items.createdAt,
-                status: items.status,
-                seller: {
-                    name: user.name,
-                    image: user.image,
-                },
-            })
+            .select(dynamicSelection)
             .from(items)
             .leftJoin(user, eq(items.sellerId, user.id)) // join to get seller info
             .where(and(...whereConditions))
@@ -78,6 +80,8 @@ export const getItems = async (filters: ItemFilters) => {
             .offset(offset)
             .orderBy(orderBy),
     ]);
+
+    console.log("Top result score:", rows[0]?.similarity);
 
     return {
         data: rows,
