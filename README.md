@@ -66,11 +66,11 @@ This type of system is commonly used for:
 Demo credentials are available to showcase real user flows:
 
 **Buyer Account**\
-Email: [sarah\_buyer@example.com](mailto\:demo-buyer@example.com)\
+Email: [sarah_buyer@example.com](mailto:demo-buyer@example.com)\
 Password: Password123!
 
 **Seller Account**\
-Email: [mike\_seller@example.com](mailto\:demo-seller@example.com)\
+Email: [mike_seller@example.com](mailto:demo-seller@example.com)\
 Password: Password123!
 
 These accounts demonstrate listing creation, search, messaging, and payment workflows.
@@ -110,7 +110,7 @@ Typical next steps would include:
 - Improving AI-search relevance using usage data
 - Adding reviews, ratings, or reputation systems
 - Expanding admin tools and moderation controls
-- Strengthening edge-case handling and security hardening
+- Strengthening edge-case handling and security
 - Integrating live marketplace analytics for products
 
 ---
@@ -120,4 +120,3 @@ Typical next steps would include:
 This repository demonstrates how I approach **full-stack web application development** for client work. The focus is on building systems that are realistic, maintainable, and ready to grow.
 
 If you are building a marketplace, MVP, or internal platform with similar requirements, this project reflects how I would approach your system end-to-end.
-
