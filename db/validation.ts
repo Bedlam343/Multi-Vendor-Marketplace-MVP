@@ -1,7 +1,11 @@
 import { z } from "zod";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import { user, items, messages, orders } from "@/db/schema";
-import { itemConditionEnum, cardBrandEnum } from "@/utils/enums";
+import {
+    itemConditionEnum,
+    cardBrandEnum,
+    itemStatusEnum,
+} from "@/utils/enums";
 import {
     GCS_DOMAIN,
     ITEM_LIMIT_DEFAULT,
@@ -68,7 +72,7 @@ export const insertItemSchema = createInsertSchema(items, {
             z
                 .url("Invalid image URL")
                 .startsWith(
-                    `${GCS_DOMAIN}`,
+                    `https://${GCS_DOMAIN}`,
                     "Image must be uploaded to our storage",
                 ),
         )
@@ -99,6 +103,7 @@ export const itemFilterSchema = z.object({
     minPrice: z.coerce.number().optional(),
     maxPrice: z.coerce.number().optional(),
     sellerId: z.string().optional(),
+    status: z.enum(itemStatusEnum.enumValues).optional(),
 });
 
 export type ItemFilters = z.infer<typeof itemFilterSchema>;

@@ -1,4 +1,4 @@
-import { desc, eq, and, gte, lte, count, sql } from "drizzle-orm";
+import { desc, eq, and, gte, lte, count, sql, type SQL } from "drizzle-orm";
 import { db } from "@/db";
 import { items, user } from "@/db/schema";
 import { itemFilterSchema, type ItemFilters } from "@/db/validation";
@@ -28,7 +28,14 @@ export const getItems = async (filters: ItemFilters) => {
     const offset = (page - 1) * numItems;
 
     // Build dynamic conditions
-    const whereConditions = [eq(items.status, "available")];
+    const whereConditions: SQL[] = [];
+
+    if (filters.status) {
+        whereConditions.push(eq(items.status, filters.status));
+    } else if (!sellerId) {
+        whereConditions.push(eq(items.status, "available"));
+    }
+
     if (sellerId) whereConditions.push(eq(items.sellerId, sellerId));
     if (condition) whereConditions.push(eq(items.condition, condition));
     if (minPrice) whereConditions.push(gte(items.price, minPrice.toString()));

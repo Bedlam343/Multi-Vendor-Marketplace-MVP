@@ -1,11 +1,12 @@
 import type { NextConfig } from "next";
+import { GCS_DOMAIN } from "@/utils/constants";
 
 const nextConfig: NextConfig = {
     images: {
         remotePatterns: [
             {
                 protocol: "https",
-                hostname: "picsum.photos",
+                hostname: GCS_DOMAIN,
             },
         ],
     },

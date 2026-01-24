@@ -158,7 +158,11 @@ export default function Navbar() {
                                     My Purchases
                                 </DropdownItem>
                                 <DropdownItem
-                                    href="/saved"
+                                    onClick={() =>
+                                        window.alert(
+                                            "Save Items feature coming soon!",
+                                        )
+                                    }
                                     icon={<Tag className="w-4 h-4" />}
                                 >
                                     Saved Items
@@ -189,7 +193,11 @@ export default function Navbar() {
 
                                 {/* ACCOUNT SECTION */}
                                 <DropdownItem
-                                    href="/settings"
+                                    onClick={() =>
+                                        window.alert(
+                                            "Settings page coming soon!",
+                                        )
+                                    }
                                     icon={<Settings className="w-4 h-4" />}
                                 >
                                     Settings
@@ -217,14 +225,17 @@ function DropdownItem({
     href,
     icon,
     children,
+    onClick,
 }: {
-    href: string;
+    href?: string;
     icon: React.ReactNode;
     children: React.ReactNode;
+    onClick?: () => void;
 }) {
     return (
         <Link
-            href={href}
+            href={href || "#"}
+            onClick={onClick}
             className="flex items-center gap-3 px-4 py-2.5 text-sm text-foreground hover:bg-muted hover:text-primary transition-colors"
         >
             <span className="text-muted-foreground group-hover:text-primary">
