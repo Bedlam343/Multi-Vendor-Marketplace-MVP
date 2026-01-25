@@ -61,7 +61,10 @@ export function LoginForm() {
 
                 <div className="flex justify-end mt-2">
                     <Link
-                        href="/forgot-password"
+                        onClick={() =>
+                            alert("Forgot password feature coming soon!")
+                        }
+                        href="#"
                         className="text-xs font-medium text-accent hover:text-accent/80 transition-colors"
                     >
                         Forgot your password?
