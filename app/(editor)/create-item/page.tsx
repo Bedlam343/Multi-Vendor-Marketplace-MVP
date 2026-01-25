@@ -8,11 +8,6 @@ export const metadata = {
 };
 
 export default async function CreateItemPage() {
-    const session = await auth.api.getSession({
-        headers: await headers(),
-    });
-    if (!session?.user) return redirect("/login");
-
     return (
         <div className="max-w-3xl mx-auto px-4 py-12">
             {/* Title text moved inside the form component for better control */}
