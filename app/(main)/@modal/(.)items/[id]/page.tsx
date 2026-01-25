@@ -25,6 +25,8 @@ export default async function ItemModal({
 
     const isOwner = session?.user?.id === item.seller?.id;
 
+    console.log("isOwner", isOwner);
+
     return (
         <Modal>
             {isOwner ? (

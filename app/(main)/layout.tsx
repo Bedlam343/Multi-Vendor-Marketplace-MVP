@@ -5,8 +5,10 @@ import NavbarUser from "@/components/layout/NavbarUser";
 
 export default async function MainLayout({
     children,
+    modal,
 }: {
     children: React.ReactNode;
+    modal: any;
 }) {
     const session = await auth.api.getSession({
         headers: await headers(),
@@ -21,6 +23,8 @@ export default async function MainLayout({
             )}
 
             <main className="flex-1">{children}</main>
+
+            {modal}
         </div>
     );
 }
