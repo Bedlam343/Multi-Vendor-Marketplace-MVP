@@ -90,8 +90,14 @@ export const getItems = async (filters: ItemFilters) => {
 
     console.log("Top result score:", rows[0]?.similarity);
 
+    // remove similarity from the result
+    const result = rows.map((row) => {
+        const { similarity, ...rest } = row;
+        return rest;
+    });
+
     return {
-        data: rows,
+        data: result,
         pagination: {
             total: totalResult[0].count,
             pages: Math.ceil(totalResult[0].count / numItems),
