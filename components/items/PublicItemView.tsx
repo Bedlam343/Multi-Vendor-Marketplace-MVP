@@ -18,6 +18,7 @@ import { formatDistanceToNow } from "date-fns";
 import useEmblaCarousel from "embla-carousel-react";
 import { type ItemWithSeller } from "@/data/items";
 import Link from "next/link";
+import FirstMessageModal from "@/components/chat/FirstMessageModal";
 
 interface PublicItemViewProps {
     item: ItemWithSeller;
@@ -30,6 +31,8 @@ export default function PublicItemView({
 }: PublicItemViewProps) {
     const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true });
     const [selectedIndex, setSelectedIndex] = useState(0);
+
+    const [isMessageModalOpen, setIsMessageModalOpen] = useState(false);
 
     const scrollPrev = useCallback(
         () => emblaApi && emblaApi.scrollPrev(),
@@ -189,9 +192,7 @@ export default function PublicItemView({
                                     <button
                                         className="flex-1 min-w-[200px] py-4 bg-card border border-border hover:border-primary text-foreground font-bold rounded-xl transition-all flex items-center justify-center gap-3 active:scale-[0.98]"
                                         onClick={() =>
-                                            alert(
-                                                "Messaging feature coming soon!",
-                                            )
+                                            setIsMessageModalOpen(true)
                                         }
                                     >
                                         <MessageCircle className="w-5 h-5" />
@@ -327,6 +328,12 @@ export default function PublicItemView({
                 </div>
             </div>
 
+            <FirstMessageModal
+                isOpen={isMessageModalOpen}
+                onClose={() => setIsMessageModalOpen(false)}
+                item={item}
+            />
+
             {/* Floating "Milky" Actions (Modal Only) */}
             {isModal && (
                 <div
@@ -349,7 +356,7 @@ export default function PublicItemView({
                         rounded-2xl backdrop-blur-2xl transition-all border border-white/10 flex 
                         items-center justify-center gap-3 active:scale-[0.98] shadow-2xl shadow-black/40 
                         pointer-events-auto px-6 py-3"
-                        onClick={() => alert("Messaging feature coming soon!")}
+                        onClick={() => setIsMessageModalOpen(true)}
                     >
                         <MessageCircle className="w-5 h-5" />
                         Message Seller
