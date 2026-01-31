@@ -2,6 +2,8 @@
 
 import { useState, useCallback, useEffect } from "react";
 import Image from "next/image";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import {
     MessageCircle,
     ShoppingBag,
@@ -16,8 +18,9 @@ import {
 } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import useEmblaCarousel from "embla-carousel-react";
+
+import { useSession } from "@/lib/auth-client";
 import { type ItemWithSeller } from "@/data/items";
-import Link from "next/link";
 import FirstMessageModal from "@/components/chat/FirstMessageModal";
 
 interface PublicItemViewProps {
@@ -29,6 +32,9 @@ export default function PublicItemView({
     item,
     isModal = false,
 }: PublicItemViewProps) {
+    const { data: userData } = useSession();
+
+    const router = useRouter();
     const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true });
     const [selectedIndex, setSelectedIndex] = useState(0);
 
@@ -57,6 +63,14 @@ export default function PublicItemView({
         onSelect();
         emblaApi.on("select", onSelect);
     }, [emblaApi, onSelect]);
+
+    const handleMessageSeller = () => {
+        if (!userData) {
+            router.push("/login");
+            return;
+        }
+        setIsMessageModalOpen(true);
+    };
 
     return (
         <div
@@ -191,9 +205,7 @@ export default function PublicItemView({
                                     </Link>
                                     <button
                                         className="flex-1 min-w-[200px] py-4 bg-card border border-border hover:border-primary text-foreground font-bold rounded-xl transition-all flex items-center justify-center gap-3 active:scale-[0.98]"
-                                        onClick={() =>
-                                            setIsMessageModalOpen(true)
-                                        }
+                                        onClick={handleMessageSeller}
                                     >
                                         <MessageCircle className="w-5 h-5" />
                                         Message Seller
@@ -334,7 +346,6 @@ export default function PublicItemView({
                 item={item}
             />
 
-            {/* Floating "Milky" Actions (Modal Only) */}
             {isModal && (
                 <div
                     className="absolute bottom-6 left-6 right-6 flex flex-col sm:flex-row 
@@ -356,7 +367,7 @@ export default function PublicItemView({
                         rounded-2xl backdrop-blur-2xl transition-all border border-white/10 flex 
                         items-center justify-center gap-3 active:scale-[0.98] shadow-2xl shadow-black/40 
                         pointer-events-auto px-6 py-3"
-                        onClick={() => setIsMessageModalOpen(true)}
+                        onClick={handleMessageSeller}
                     >
                         <MessageCircle className="w-5 h-5" />
                         Message Seller
