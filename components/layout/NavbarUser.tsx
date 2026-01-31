@@ -33,8 +33,18 @@ export default function NavbarUser({ user }: NavbarUserProps) {
     const menuRef = useRef<HTMLDivElement>(null);
 
     const handleLogout = async () => {
-        await signOut();
-        router.push("/login");
+        try {
+            await signOut();
+
+            // Refresh the current route cache
+            router.refresh();
+
+            if (pathname !== "/search") {
+                router.replace("/search");
+            }
+        } catch (error) {
+            console.error("Logout failed", error);
+        }
     };
 
     useEffect(() => {

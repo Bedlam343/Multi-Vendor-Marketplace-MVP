@@ -28,7 +28,7 @@ export type SignupActionResponse = {
 
 export const loginAction = async (
     prevState: LoginActionResponse | undefined,
-    formData: FormData
+    formData: FormData,
 ): Promise<LoginActionResponse> => {
     const rawData = Object.fromEntries(formData.entries());
 
@@ -73,7 +73,7 @@ export const loginAction = async (
 
 export const signupAction = async (
     prevState: SignupActionResponse | undefined,
-    formData: FormData
+    formData: FormData,
 ): Promise<SignupActionResponse> => {
     const rawData = Object.fromEntries(formData.entries());
 
@@ -144,10 +144,4 @@ export const signupAction = async (
     }
 
     redirect("/dashboard");
-};
-
-export const logoutAction = async () => {
-    await auth.api.signOut();
-    revalidatePath("/");
-    redirect("/login");
 };
