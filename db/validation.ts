@@ -182,3 +182,14 @@ export const createPendingCardOrderSchema = z.object({
 export type CreatePendingCardOrderInput = z.infer<
     typeof createPendingCardOrderSchema
 >;
+
+export const sendFirstMessageSchema = z.object({
+    itemId: z.string().min(1, "Item ID is required"),
+    content: z
+        .string()
+        .trim()
+        .min(1, "Message cannot be empty")
+        .max(1000, "Message is too long"),
+});
+
+export type SendFirstMessageInput = z.infer<typeof sendFirstMessageSchema>;

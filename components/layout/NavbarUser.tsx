@@ -14,6 +14,7 @@ import {
     ShoppingBag,
     Tag,
     CreditCard,
+    MessageCircle,
 } from "lucide-react";
 
 import { signOut } from "@/lib/auth-client";
@@ -100,6 +101,21 @@ export default function NavbarUser({ user }: NavbarUserProps) {
 
                 {/* Right Side: USER ACTIONS */}
                 <div className="flex items-center gap-4">
+                    {/* --- MESSAGES BUTTON (Text + Icon) --- */}
+                    {/* Hidden on mobile, visible on desktop. Styled as a 'Ghost' button */}
+                    <Link
+                        href="/messages"
+                        className={`hidden sm:flex items-center gap-2 px-4 py-2 rounded-full transition-all font-medium text-sm ${
+                            pathname?.startsWith("/messages")
+                                ? "bg-primary/10 text-primary font-bold"
+                                : "text-muted-foreground hover:text-foreground hover:bg-muted"
+                        }`}
+                    >
+                        <MessageCircle className="w-4 h-4" />
+                        <span>Messages</span>
+                    </Link>
+
+                    {/* --- SELL BUTTON (Primary CTA) --- */}
                     <Link
                         href="/create-item"
                         className="hidden sm:flex items-center gap-2 bg-foreground hover:bg-foreground/90 text-primary-foreground text-sm font-medium px-4 py-2 rounded-full transition-all shadow-sm hover:shadow-md active:scale-95"
@@ -108,6 +124,7 @@ export default function NavbarUser({ user }: NavbarUserProps) {
                         <span>Sell Item</span>
                     </Link>
 
+                    {/* --- USER DROPDOWN --- */}
                     <div className="relative" ref={menuRef}>
                         <button
                             onClick={() => setIsMenuOpen(!isMenuOpen)}
@@ -127,7 +144,9 @@ export default function NavbarUser({ user }: NavbarUserProps) {
                                 )}
                             </div>
                             <ChevronDown
-                                className={`w-3 h-3 text-muted-foreground transition-transform ${isMenuOpen ? "rotate-180" : ""}`}
+                                className={`w-3 h-3 text-muted-foreground transition-transform ${
+                                    isMenuOpen ? "rotate-180" : ""
+                                }`}
                             />
                         </button>
 
@@ -142,6 +161,16 @@ export default function NavbarUser({ user }: NavbarUserProps) {
                                     </p>
                                 </div>
 
+                                {/* Mobile-Only Actions */}
+                                <div className="sm:hidden px-2 mb-2 space-y-1">
+                                    <Link
+                                        href="/create-item"
+                                        className="flex w-full items-center justify-center gap-2 bg-primary text-primary-foreground text-sm font-bold px-4 py-2 rounded-lg"
+                                    >
+                                        <Plus className="w-4 h-4" /> Sell Item
+                                    </Link>
+                                </div>
+
                                 <div className="px-3 py-1.5 text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
                                     Buying
                                 </div>
@@ -151,6 +180,19 @@ export default function NavbarUser({ user }: NavbarUserProps) {
                                 >
                                     My Purchases
                                 </DropdownItemLink>
+
+                                {/* Mobile Messages Link (Keep it here for mobile users) */}
+                                <div className="sm:hidden">
+                                    <DropdownItemLink
+                                        href="/messages"
+                                        icon={
+                                            <MessageCircle className="w-4 h-4" />
+                                        }
+                                    >
+                                        Messages
+                                    </DropdownItemLink>
+                                </div>
+
                                 <DropdownItemLink
                                     onClick={() =>
                                         alert(
