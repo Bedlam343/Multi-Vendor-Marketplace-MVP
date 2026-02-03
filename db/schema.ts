@@ -108,7 +108,7 @@ export const messages = pgTable("messages", {
 });
 export const conversations = pgTable("conversations", {
     id: uuid("id").primaryKey().defaultRandom(),
-    itemId: text("itemId")
+    itemId: uuid("itemId")
         .notNull()
         .references(() => items.id),
     participantOneId: text("participantOneId")
