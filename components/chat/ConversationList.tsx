@@ -43,13 +43,18 @@ export default function ConversationList({
                     >
                         {/* User Avatar */}
                         <div className="relative shrink-0">
-                            <div className="w-10 h-10 rounded-full bg-muted overflow-hidden border border-border">
+                            <div
+                                className="w-10 h-10 rounded-full bg-muted overflow-hidden 
+                                border border-border relative"
+                            >
                                 {conv.otherUser.image ? (
                                     <Image
                                         src={conv.otherUser.image}
                                         alt={conv.otherUser.name || "User"}
                                         fill
+                                        sizes="40px"
                                         className="object-cover"
+                                        unoptimized
                                     />
                                 ) : (
                                     <div className="w-full h-full flex items-center justify-center text-muted-foreground">
@@ -64,6 +69,7 @@ export default function ConversationList({
                                         src={conv.item.image}
                                         alt="item"
                                         fill
+                                        sizes="20px"
                                         className="object-cover"
                                     />
                                 </div>

@@ -191,5 +191,14 @@ export const sendFirstMessageSchema = z.object({
         .min(1, "Message cannot be empty")
         .max(1000, "Message is too long"),
 });
-
 export type SendFirstMessageInput = z.infer<typeof sendFirstMessageSchema>;
+
+export const sendMessageSchema = z.object({
+    conversationId: z.string().min(1, "Conversation ID is required"),
+    content: z
+        .string()
+        .trim()
+        .min(1, "Message cannot be empty")
+        .max(1000, "Message is too long"),
+});
+export type SendMessageInput = z.infer<typeof sendMessageSchema>;

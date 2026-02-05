@@ -26,6 +26,10 @@ const nextConfig: NextConfig = {
                 protocol: "https",
                 hostname: GCS_DOMAIN,
             },
+            {
+                protocol: "https",
+                hostname: "api.dicebear.com",
+            },
         ],
     },
 };
