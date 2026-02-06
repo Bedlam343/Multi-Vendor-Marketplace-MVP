@@ -11,7 +11,8 @@
         "db:up": "docker compose up -d",
         "db:down": "docker compose down",
         "db:init": "docker exec -it nextjs-vector-db psql -U postgres -d vectordb -c 'CREATE EXTENSION IF NOT EXISTS vector;'",
-        "db:reset": "docker compose down -v && docker compose up -d && npm run db:init"
+        "db:reset": "docker compose down -v && docker compose up -d && npm run db:init",
+        "studio:cloud": "echo \"https://local.drizzle.studio?port=443&host=${CODESPACE_NAME}-4983.app.github.dev&proto=https\" && npx drizzle-kit studio"
     },
     "dependencies": {
         "@google-cloud/storage": "^7.18.0",

@@ -1,0 +1,15 @@
+{
+    "name": "Drizzle Project",
+    "portsAttributes": {
+        "4983": {
+            "label": "Drizzle Studio",
+            "onAutoForward": "notify",
+            "visibility": "public"
+        },
+        "3000": {
+            "label": "App Server",
+            "onAutoForward": "openBrowser"
+        }
+    },
+    "forwardPorts": [4983, 3000]
+}
