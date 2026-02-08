@@ -20,12 +20,14 @@ import {
 import { signOut } from "@/lib/auth-client";
 import DropdownItemLink from "@/components/ui/DropdownItemLink";
 import NavLink from "@/components/ui/NavLink";
+import MessageBadge from "@/components/layout/MessagesBadge";
 
 interface NavbarUserProps {
     user: User;
+    unreadMessagesCount: number;
 }
 
-export default function NavbarUser({ user }: NavbarUserProps) {
+export default function NavbarUser({ user, unreadMessagesCount }: NavbarUserProps) {
     const router = useRouter();
     const pathname = usePathname();
     const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -111,19 +113,7 @@ export default function NavbarUser({ user }: NavbarUserProps) {
 
                 {/* Right Side: USER ACTIONS */}
                 <div className="flex items-center gap-4">
-                    {/* --- MESSAGES BUTTON (Text + Icon) --- */}
-                    {/* Hidden on mobile, visible on desktop. Styled as a 'Ghost' button */}
-                    <Link
-                        href="/messages"
-                        className={`hidden sm:flex items-center gap-2 px-4 py-2 rounded-full transition-all font-medium text-sm ${
-                            pathname?.startsWith("/messages")
-                                ? "bg-primary/10 text-primary font-bold"
-                                : "text-muted-foreground hover:text-foreground hover:bg-muted"
-                        }`}
-                    >
-                        <MessageCircle className="w-4 h-4" />
-                        <span>Messages</span>
-                    </Link>
+                    <MessageBadge initialCount={unreadMessagesCount} userId={user.id} />
 
                     {/* --- SELL BUTTON (Primary CTA) --- */}
                     <Link

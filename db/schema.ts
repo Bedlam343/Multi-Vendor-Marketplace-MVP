@@ -105,6 +105,7 @@ export const messages = pgTable("messages", {
         .notNull()
         .references(() => user.id),
     content: text("content").notNull(),
+    read: boolean("read").notNull().default(false),
     createdAt: timestamp("createdAt").notNull().defaultNow(),
 });
 export const conversations = pgTable("conversations", {

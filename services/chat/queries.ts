@@ -1,8 +1,9 @@
 import "server-only";
 
-import { eq, or, desc } from "drizzle-orm";
+import { eq, or, desc, count, ne, and } from "drizzle-orm";
 import { db } from "@/db";
-import { conversations } from "@/db/schema";
+import { conversations, messages } from "@/db/schema";
+import { authenticatedQuery } from "@/lib/safe-query";
 // import { authenticatedQuery } from "@/lib/safe-query";
 
 export async function getUserConversations(userId: string) {
@@ -46,7 +47,32 @@ export async function getUserConversations(userId: string) {
 
     return formatted;
 }
-
 export type ConversationSnippets = Awaited<
     ReturnType<typeof getUserConversations>
 >;
+
+export async function getUnreadMessageCount(userId: string): Promise<number> {
+    return authenticatedQuery(userId, async (id, session) => {
+        if (id !== session.user.id) throw new Error("Forbidden");
+
+        const [result] = await db
+            .select({ count: count() })
+            .from(messages)
+            .leftJoin(
+                conversations,
+                eq(messages.conversationId, conversations.id),
+            )
+            .where(
+                and(
+                    eq(messages.read, false),
+                    ne(messages.senderId, id),
+                    or(
+                        eq(conversations.participantOneId, id),
+                        eq(conversations.participantTwoId, id),
+                    ),
+                ),
+            );
+
+        return result?.count || 0;
+    });
+}
