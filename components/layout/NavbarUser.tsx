@@ -27,7 +27,15 @@ interface NavbarUserProps {
     unreadMessagesCount: number;
 }
 
-export default function NavbarUser({ user, unreadMessagesCount }: NavbarUserProps) {
+export default function NavbarUser({
+    user,
+    unreadMessagesCount,
+}: NavbarUserProps) {
+    console.log(
+        "NavbarUser rendered with unreadMessagesCount:",
+        unreadMessagesCount,
+    );
+
     const router = useRouter();
     const pathname = usePathname();
     const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -113,7 +121,10 @@ export default function NavbarUser({ user, unreadMessagesCount }: NavbarUserProp
 
                 {/* Right Side: USER ACTIONS */}
                 <div className="flex items-center gap-4">
-                    <MessageBadge initialCount={unreadMessagesCount} userId={user.id} />
+                    <MessageBadge
+                        initialCount={unreadMessagesCount}
+                        userId={user.id}
+                    />
 
                     {/* --- SELL BUTTON (Primary CTA) --- */}
                     <Link

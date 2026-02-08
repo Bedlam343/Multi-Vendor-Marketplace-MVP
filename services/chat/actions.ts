@@ -1,6 +1,6 @@
 "use server";
 
-import { eq, and, or } from "drizzle-orm";
+import { eq, and, or, ne } from "drizzle-orm";
 
 import { db } from "@/db";
 import { pusher } from "@/lib/pusher";
@@ -8,6 +8,14 @@ import { authenticatedAction } from "@/lib/safe-action";
 import { conversations, messages } from "@/db/schema";
 import { getItemById } from "@/data/items";
 import type { SendMessageInput, SendFirstMessageInput } from "@/db/validation";
+import { getUnreadMessageCount } from "@/services/chat/queries";
+
+// helper function
+async function broadcastUnreadCount(userId: string) {
+    const count = await getUnreadMessageCount(userId);
+    console.log("Bradcasting unread count for user", userId, "Count:", count);
+    await pusher.trigger(`user-${userId}`, "unread-update", { count });
+}
 
 export async function sendFirstMessage(input: SendFirstMessageInput) {
     return authenticatedAction(input, async ({ itemId, content }, session) => {
@@ -87,23 +95,29 @@ export async function sendFirstMessage(input: SendFirstMessageInput) {
             });
 
             // trigger pusher
-            await pusher.trigger(
-                `user-${sellerId}`, // channel specific to the seller
-                "new-message", // event name
-                {
-                    conversationId: result.conversationId,
-                    senderName: session.user.name,
-                    content: result.newMessage.content,
-                    timestamp: new Date().toISOString(),
-                },
-            );
+            await pusher.trigger(`user-${sellerId}`, "new-message", {
+                conversationId: result.conversationId,
+                content: content,
+                timestamp: new Date().toISOString(),
+
+                // Add the missing pieces so the UI can render instantly
+                senderId: session.user.id,
+                senderName: session.user.name,
+                senderImage: session.user.image, // 📸
+
+                itemId: item.id,
+                itemTitle: item.title, // 📦
+                itemPrice: item.price,
+                itemImage: item.images?.[0] || null,
+            });
+
+            // Update Seller's Unread Count
+            await broadcastUnreadCount(sellerId);
 
             return {
                 success: true,
                 message: "Message sent successfully",
-                data: {
-                    conversationId: result.conversationId,
-                },
+                data: { conversationId: result.conversationId },
             };
         } catch (error) {
             console.error("Failed to send message:", error);
@@ -118,7 +132,7 @@ export const sendMessage = async (input: SendMessageInput) => {
         async ({ conversationId, content }, session) => {
             const userId = session.user.id;
 
-            // verify conversation exists and user is a participant
+            // 1. Verify conversation
             const conversation = await db.query.conversations.findFirst({
                 where: eq(conversations.id, conversationId),
                 columns: { participantOneId: true, participantTwoId: true },
@@ -133,7 +147,7 @@ export const sendMessage = async (input: SendMessageInput) => {
             if (!isParticipant)
                 return { success: false, message: "Unauthorized" };
 
-            // insert the message
+            // 2. Insert Message
             const [newMessage] = await db
                 .insert(messages)
                 .values({
@@ -143,7 +157,7 @@ export const sendMessage = async (input: SendMessageInput) => {
                 })
                 .returning();
 
-            // update conversation (last message and updatedAt)
+            // 3. Update Conversation
             await db
                 .update(conversations)
                 .set({
@@ -152,8 +166,7 @@ export const sendMessage = async (input: SendMessageInput) => {
                 })
                 .where(eq(conversations.id, conversationId));
 
-            // trigger real-time event
-            // fast update for active window
+            // Trigger "Chat Room" Update (for open windows)
             await pusher.trigger(
                 `conversation-${conversationId}`,
                 "new-message",
@@ -165,26 +178,75 @@ export const sendMessage = async (input: SendMessageInput) => {
                 },
             );
 
-            // notify recipient so they get notified even if not in chat window
             const recipientId =
                 userId === conversation.participantOneId
                     ? conversation.participantTwoId
                     : conversation.participantOneId;
 
+            // Trigger "Inbox Update" for recipient
             await pusher.trigger(`user-${recipientId}`, "inbox-update", {
                 conversationId,
                 lastMessage: content,
                 updatedAt: new Date(),
             });
 
+            await broadcastUnreadCount(recipientId);
+
             return {
                 success: true,
                 message: "Message sent successfully",
-                data: {
-                    newMessage: newMessage,
-                },
+                data: { newMessage },
             };
         },
     );
 };
 export type SendMessageResult = Awaited<ReturnType<typeof sendMessage>>;
+
+export const markMessagesAsRead = async (conversationId: string) => {
+    return authenticatedAction(conversationId, async (convId, session) => {
+        try {
+            const userId = session.user.id;
+
+            const conversation = await db.query.conversations.findFirst({
+                where: eq(conversations.id, conversationId),
+                columns: { participantOneId: true, participantTwoId: true },
+            });
+            if (!conversation) {
+                return { success: false, message: "Chat not found" };
+            }
+
+            const isParticipant =
+                conversation.participantOneId === userId ||
+                conversation.participantTwoId === userId;
+            if (!isParticipant) {
+                return { success: false, message: "Unauthorized" };
+            }
+
+            await db
+                .update(messages)
+                .set({ read: true })
+                .where(
+                    and(
+                        eq(messages.conversationId, conversationId),
+                        eq(messages.read, false),
+                        ne(messages.senderId, userId), // Only mark OTHER people's messages
+                    ),
+                );
+
+            // Broadcast New Count to Current User
+            await broadcastUnreadCount(userId);
+
+            await pusher.trigger(`user-${userId}`, "conversation-read", {
+                conversationId,
+            });
+
+            return { success: true, message: "Messages marked as read" };
+        } catch (error) {
+            console.error("Failed to mark messages as read:", error);
+            return {
+                success: false,
+                message: "Failed to mark messages as read",
+            };
+        }
+    });
+};

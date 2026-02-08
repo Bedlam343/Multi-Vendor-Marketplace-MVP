@@ -8,7 +8,7 @@ import { format } from "date-fns";
 
 import { type User as AuthUser } from "better-auth";
 import { pusherClient } from "@/lib/pusher-client";
-import { sendMessage } from "@/services/chat/actions";
+import { markMessagesAsRead, sendMessage } from "@/services/chat/actions";
 
 // Types for props
 type Message = {
@@ -22,7 +22,6 @@ type ChatWindowProps = {
     conversationId: string;
     currentUser: AuthUser;
     otherUser: { name: string | null; image: string | null };
-    // UPDATE: Added 'id' to the item type definition
     item: { id: string; title: string; price: string; image: string | null };
     initialMessages: Message[];
 };
@@ -46,6 +45,13 @@ export default function ChatWindow({
         }
     }, [messages]);
 
+    // mark messages as read on load
+    useEffect(() => {
+        if (conversationId) {
+            markMessagesAsRead(conversationId);
+        }
+    }, [conversationId]);
+
     // Real-time Subscription
     useEffect(() => {
         const channelName = `conversation-${conversationId}`;
@@ -59,6 +65,11 @@ export default function ChatWindow({
                     { ...data, createdAt: new Date(data.createdAt) },
                 ];
             });
+
+            // If the message is from the OTHER user, mark as read immediately
+            if (data.senderId !== currentUser.id) {
+                markMessagesAsRead(conversationId);
+            }
         });
 
         return () => {

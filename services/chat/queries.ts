@@ -25,6 +25,7 @@ export async function getUserConversations(userId: string) {
     const formatted = results.map((conv) => {
         const isUserOne = conv.participantOneId === userId;
         const otherUser = isUserOne ? conv.participantTwo : conv.participantOne;
+        const lastMessage = conv.lastMessage;
 
         return {
             id: conv.id,
@@ -41,6 +42,10 @@ export async function getUserConversations(userId: string) {
                 image: otherUser.image,
             },
 
+            hasUnread: lastMessage
+                ? lastMessage.senderId !== userId && !lastMessage.read
+                : false,
+
             lastMessage: conv.lastMessage?.content || "Started a conversation",
         };
     });
@@ -53,8 +58,6 @@ export type ConversationSnippets = Awaited<
 
 export async function getUnreadMessageCount(userId: string): Promise<number> {
     return authenticatedQuery(userId, async (id, session) => {
-        if (id !== session.user.id) throw new Error("Forbidden");
-
         const [result] = await db
             .select({ count: count() })
             .from(messages)

@@ -6,19 +6,20 @@ import { MessageCircle } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { pusherClient } from "@/lib/pusher-client";
 
-interface MessageBadgeProps {
+interface NavbarMessagesBadgeProps {
     initialCount: number;
     userId: string;
 }
 
-export default function MessageBadge({
+export default function NavbarMessagesBadge({
     initialCount,
     userId,
-}: MessageBadgeProps) {
+}: NavbarMessagesBadgeProps) {
+    console.log("Initial Unread Count in NavbarMessagesBadge:", initialCount);
     const pathname = usePathname();
     const [unreadCount, setUnreadCount] = useState(initialCount);
 
-    // Sync state if server prop changes (e.g. on navigation/revalidation)
+    // Sync state if server prop changes (e.g. on navigation)
     useEffect(() => {
         setUnreadCount(initialCount);
     }, [initialCount]);
@@ -29,12 +30,12 @@ export default function MessageBadge({
         const channelName = `user-${userId}`;
         const channel = pusherClient.subscribe(channelName);
 
-        // Listen for new messages causing an inbox update
-        channel.bind("inbox-update", () => {
-            setUnreadCount((prev) => prev + 1);
+        // Listen for the specific "unread-update" event
+        // Payload structure: { count: number }
+        channel.bind("unread-update", (data: { count: number }) => {
+            console.log("Received unread-update event:", data);
+            setUnreadCount(data.count);
         });
-
-        // Future: Listen for 'messages-read' event to decrement
 
         return () => {
             pusherClient.unsubscribe(channelName);
@@ -46,7 +47,7 @@ export default function MessageBadge({
     return (
         <Link
             href="/messages"
-            className={`hidden sm:flex items-center gap-2 px-4 py-2 rounded-full transition-all font-medium text-sm relative ${
+            className={`hidden sm:flex items-center gap-2 px-4 py-2 rounded-full transition-all font-medium text-sm relative group ${
                 isActive
                     ? "bg-primary/10 text-primary font-bold"
                     : "text-muted-foreground hover:text-foreground hover:bg-muted"
@@ -54,6 +55,7 @@ export default function MessageBadge({
         >
             <div className="relative">
                 <MessageCircle className="w-4 h-4" />
+
                 {unreadCount > 0 && (
                     <span
                         className="absolute -top-1.5 -right-1.5 

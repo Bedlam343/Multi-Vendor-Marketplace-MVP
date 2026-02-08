@@ -2,7 +2,7 @@ import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
 
-import { getUserConversations } from "@/services/chat/queries"; // Function from Step 1
+import { getUserConversations } from "@/services/chat/queries";
 import ConversationList from "@/components/chat/ConversationList";
 
 export default async function MessagesLayout({
@@ -26,13 +26,16 @@ export default async function MessagesLayout({
                     <h1 className="font-bold text-xl tracking-tight">
                         Messages
                     </h1>
-                    <span className="text-xs font-medium px-2 py-1 bg-primary/10 text-primary rounded-full">
+                    {/* <span className="text-xs font-medium px-2 py-1 bg-primary/10 text-primary rounded-full">
                         {conversations.length}
-                    </span>
+                    </span> */}
                 </div>
 
                 {/* The List Component */}
-                <ConversationList conversations={conversations} />
+                <ConversationList
+                    conversations={conversations}
+                    userId={session.user.id}
+                />
             </div>
 
             <div className="hidden md:flex flex-1 flex-col bg-muted/5 relative overflow-hidden">

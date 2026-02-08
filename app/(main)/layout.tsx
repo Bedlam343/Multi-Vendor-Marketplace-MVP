@@ -19,6 +19,8 @@ export default async function MainLayout({
         ? await getUnreadMessageCount(session.user.id)
         : 0;
 
+    console.log("Unread Messages in (main)/layout:", unreadMessageCount);
+
     return (
         <div className="min-h-screen flex flex-col">
             {session?.user ? (
