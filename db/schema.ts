@@ -38,7 +38,6 @@ export const user = pgTable("user", {
     image: text("image"),
 
     cryptoWalletAddress: text("cryptoWalletAddress"),
-    stripeCustomerId: text("stripeCustomerId"),
     savedCardBrand: text("savedCardBrand"),
     savedCardLast4: text("savedCardLast4"),
 

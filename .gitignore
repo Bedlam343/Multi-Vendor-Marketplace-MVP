@@ -43,3 +43,5 @@ next-env.d.ts
 gs-service-account.json
 gcs-cors.json
 local_data
+/db/seed/users.json
+/db/seed/items.json
