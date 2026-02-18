@@ -1,6 +1,5 @@
 import { loadEnvConfig } from "@next/env";
-const projectDir = process.cwd();
-loadEnvConfig(projectDir);
+loadEnvConfig(process.cwd());
 
 import { drizzle } from "drizzle-orm/node-postgres";
 import { Pool } from "pg";
@@ -63,24 +62,82 @@ async function clearDatabase() {
     );
 }
 
+async function fetchRandomUsers(targetCount) {
+    console.log(`🌐 Fetching users from Random User API...`);
+
+    // Fetch double the target to ensure we have enough buffer after filtering out bad names
+    const fetchCount = targetCount * 2;
+
+    // The 'nat' parameter restricts to US, GB, CA, and AU to reduce non-Latin characters at the API level
+    const res = await fetch(
+        `https://randomuser.me/api/?results=${fetchCount}&nat=us,gb,ca,au`,
+    );
+    const data = await res.json();
+
+    if (!data || !data.results) {
+        console.warn("⚠️  Invalid data received from Random User API.");
+        return [];
+    }
+
+    const uniqueUsersMap = new Map();
+
+    // Regex allows standard A-Z, spaces, hyphens (e.g., Mary-Jane), and apostrophes (e.g., O'Connor)
+    const englishCharsOnly = /^[a-zA-Z\s\-']+$/;
+
+    for (const user of data.results) {
+        const fullName = `${user.name.first} ${user.name.last}`;
+
+        // Strict Check: Name must pass regex AND email must be unique
+        if (
+            englishCharsOnly.test(fullName) &&
+            user.email &&
+            !uniqueUsersMap.has(user.email)
+        ) {
+            uniqueUsersMap.set(user.email, {
+                email: user.email,
+                name: fullName,
+                password: user.login.password,
+                avatar: user.picture.large,
+            });
+        }
+
+        // Stop the loop exactly when we hit our target of 100
+        if (uniqueUsersMap.size === targetCount) {
+            break;
+        }
+    }
+
+    const uniqueUsers = Array.from(uniqueUsersMap.values());
+    console.log(
+        `✅ Collected ${uniqueUsers.length} clean, English-named users.`,
+    );
+    return uniqueUsers;
+}
+
 async function main() {
     console.log("🚀 Starting database seed for Users...");
 
     try {
         await clearDatabase();
 
+        const fakeUsers = await fetchRandomUsers(100);
+
         console.log(
-            "⚙️  Generating 100 fake users and inserting them into the database...",
+            `⚙️  Inserting ${fakeUsers.length} users into the database...`,
         );
 
-        // This array will hold the users with their actual Database IDs
         const finalUsers = [];
 
-        for (let i = 0; i < 100; i++) {
-            const email = faker.internet.email();
-            const password = faker.internet.password({ length: 14 });
-            const name = faker.person.fullName();
-            const image = `https://i.pravatar.cc/300?u=${encodeURIComponent(email)}`;
+        for (const apiUser of fakeUsers) {
+            const email = apiUser.email;
+            const name = apiUser.name;
+            const image = apiUser.avatar;
+
+            const password =
+                apiUser.password && apiUser.password.length >= 8
+                    ? apiUser.password
+                    : faker.internet.password({ length: 14 });
+
             const cryptoWalletAddress = getRandomWallet();
             const savedCardBrand = getRandomCardBrand();
             const savedCardLast4 = faker.string.numeric(4);
@@ -110,7 +167,7 @@ async function main() {
                         })
                         .where(eq(schema.user.id, realDatabaseId));
 
-                    // 4. Push the completed user (with the REAL ID) to our final array
+                    // 4. Push the completed user to our final array
                     finalUsers.push({
                         id: realDatabaseId,
                         name,
@@ -123,17 +180,22 @@ async function main() {
                     });
                 }
             } catch (err) {
-                console.warn(`⚠️  Failed to create user ${email}:`, err);
+                console.warn(
+                    `⚠️  Failed to create user ${email}:`,
+                    err.message || err,
+                );
             }
         }
 
-        // 5. Write the finalized data to users.json at the VERY END
+        // 5. Write the finalized data to users.json
         const filePath = path.join(__dirname, "users.json");
         fs.writeFileSync(
             filePath,
             JSON.stringify({ users: finalUsers, items: [] }, null, 2),
         );
-        console.log("💾 Saved generated user data to users.json");
+        console.log(
+            `💾 Saved ${finalUsers.length} generated user(s) to ${filePath}`,
+        );
 
         // Clean up any active sessions Better Auth created during the sign-up process
         await db.delete(schema.session);
