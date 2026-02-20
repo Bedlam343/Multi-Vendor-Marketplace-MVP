@@ -40,7 +40,7 @@ export default async function RootLayout({
             >
                 {children}
 
-                {Boolean(session) ? null : <GlobalDemoWidget />}
+                {/* {Boolean(session) ? null : <GlobalDemoWidget />} */}
             </body>
         </html>
     );
