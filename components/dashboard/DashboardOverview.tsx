@@ -83,7 +83,6 @@ export default function DashboardOverview({ data }: Props) {
                         value={`$${selling.stats.revenue.toLocaleString()}`}
                         sublabel="Lifetime earnings"
                         icon={<DollarSign className="w-5 h-5 text-green-500" />}
-                        trend="+12% this month"
                     />
                     <StatCard
                         label="Items Sold"
