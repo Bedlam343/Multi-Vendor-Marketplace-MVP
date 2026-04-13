@@ -2,7 +2,12 @@ import "server-only";
 
 import { Storage } from "@google-cloud/storage";
 
-export const storage = new Storage({ keyFilename: "gs-service-account.json" });
+// export const storage = new Storage({ keyFilename: "gs-service-account.json" });
+
+// For vercel
+export const storage = new Storage({
+    credentials: JSON.parse(process.env.GCP_APPLICATION_CREDENTIALS!),
+});
 
 export const BUCKET_NAME = process.env.GCP_BUCKET_NAME!;
 export const LISTING_IMAGES_DIR = process.env.GCP_LISTING_IMAGES_DIR!;
